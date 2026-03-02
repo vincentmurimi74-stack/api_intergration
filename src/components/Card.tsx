@@ -10,19 +10,25 @@ type Card = {
     userId: number;
 }
 
-const Card: React.FC = () => {
+const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number }> = ({ onEditPost, refreshTrigger }) => {
     const [posts, setPosts] = useState<Card[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(1);
-    const limit = 4;
+    const [limit, setLimit] = useState(4);
 
-    // Form state for new/edit post
-    const [editingPost, setEditingPost] = useState<Card | null>(null);
+
+    // Form state for new post
     const [formTitle, setFormTitle] = useState("");
     const [formBody, setFormBody] = useState("");
     const [formUserId, setFormUserId] = useState<string>("1");
     const [isCreating, setIsCreating] = useState(false);
+
+    // Snackbar state
+    const [snackbar, setSnackbar] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+    // Delete confirmation state
+    const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; postId: number | null } | null>(null);
 
     const loadPosts = async () => {
         try {
@@ -39,9 +45,17 @@ const Card: React.FC = () => {
         }
     };
 
+
     useEffect(() => {
         loadPosts();
-    }, [page]);
+    }, [page, limit, refreshTrigger]);
+
+    const handleLimitChange = (newLimit: number) => {
+        if (newLimit > 0) {
+            setLimit(newLimit);
+            setPage(1); // Reset to first page when limit changes
+        }
+    };
 
     const handleCreate = async () => {
         try {
@@ -53,7 +67,8 @@ const Card: React.FC = () => {
             };
             const created = await cardService.createPost<Card>(newPost);
             if (created) {
-                alert(`Post created (POST) successfully with received ID: ${created.id}. Note: API does not persist data.`);
+                setSnackbar({ message: `Post created successfully!`, type: 'success' });
+                setTimeout(() => setSnackbar(null), 3000);
                 setFormTitle("");
                 setFormBody("");
                 setFormUserId("1");
@@ -62,54 +77,22 @@ const Card: React.FC = () => {
                 await loadPosts();
             }
         } catch (err: any) {
-            setError(err.message || "Failed to create post");
+            setSnackbar({ message: err.message || "Failed to create post", type: 'error' });
+            setTimeout(() => setSnackbar(null), 3000);
         } finally {
             setLoading(false);
         }
     };
 
-    const handleUpdate = async (method: "PUT" | "PATCH") => {
-        if (!editingPost) return;
-        try {
-            setLoading(true);
-            let updated: Card | undefined;
-            if (method === "PUT") {
-                // PUT: update all fields
-                updated = await cardService.replacePost<Card>(editingPost.id, {
-                    id: editingPost.id,
-                    title: formTitle,
-                    body: formBody,
-                    userId: parseInt(formUserId) || editingPost.userId
-                });
-                if (updated) {
-                    setPosts(prevPosts => prevPosts.map(p => p.id === updated!.id ? updated! : p));
-                }
-            } else {
-                // PATCH: update only the title
-                updated = await cardService.updatePost<Card>(editingPost.id, {
-                    title: formTitle
-                });
-                if (updated) {
-                    setPosts(prevPosts => prevPosts.map(p => p.id === updated!.id ? { ...p, title: updated!.title } : p));
-                }
-            }
-
-            if (updated) {
-                alert(`Post ${method === "PUT" ? "replaced" : "updated"} successfully!`);
-                setEditingPost(null);
-                setFormTitle("");
-                setFormBody("");
-                setFormUserId("1");
-            }
-        } catch (err: any) {
-            setError(err.message || "Failed to update post");
-        } finally {
-            setLoading(false);
-        }
+    const handleDeleteClick = (id: number) => {
+        setDeleteConfirm({ isOpen: true, postId: id });
     };
 
-    const handleDelete = async (id: number) => {
-        if (!window.confirm("Are you sure you want to delete this post?")) return;
+    const handleDeleteConfirm = async () => {
+        if (!deleteConfirm?.postId) return;
+        const id = deleteConfirm.postId;
+        setDeleteConfirm(null);
+        
         try {
             setLoading(true);
             await cardService.deletePost(id);
@@ -117,26 +100,23 @@ const Card: React.FC = () => {
             // JSONPlaceholder doesn't persist deletes, so we must update local state
             setPosts(prevPosts => prevPosts.filter(post => post.id !== id));
 
-            alert("Post deleted successfully (DELETE)!");
+            setSnackbar({ message: "Post deleted successfully!", type: 'success' });
+            setTimeout(() => setSnackbar(null), 3000);
             // No need to call loadPosts() as it would fetch the old data from mock API
         } catch (err: any) {
-            setError(err.message || "Failed to delete post");
+            setSnackbar({ message: err.message || "Failed to delete post", type: 'error' });
+            setTimeout(() => setSnackbar(null), 3000);
         } finally {
             setLoading(false);
         }
     };
 
-    const startEditing = (post: Card) => {
-        setEditingPost(post);
-        setFormTitle(post.title);
-        setFormBody(post.body);
-        setFormUserId(post.userId.toString());
-        setIsCreating(false);
+    const handleDeleteCancel = () => {
+        setDeleteConfirm(null);
     };
 
     const startCreating = () => {
         setIsCreating(true);
-        setEditingPost(null);
         setFormTitle("");
         setFormBody("");
         setFormUserId("1");
@@ -147,7 +127,7 @@ const Card: React.FC = () => {
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <h2>Card Editor (Page {page})</h2>
+                <h2>Card Editor (Page {page}) - Showing {posts.length} cards</h2>
                 <button
                     onClick={startCreating}
                     className={styles.newPostBtn}
@@ -158,62 +138,45 @@ const Card: React.FC = () => {
 
             {error && <div className={styles.errorMessage}>{error}</div>}
 
-            {(isCreating || editingPost) && (
-                <div className={styles.formContainer}>
-                    <h3>{isCreating ? "Create New Post" : `Edit Post #${editingPost?.id}`}</h3>
-                    <div className={styles.formGroup}>
-                        <label htmlFor="userId" className={styles.formLabel}>User ID</label>
-                        <input
-                            id="userId"
-                            type="number"
-                            value={formUserId}
-                            onChange={(e) => setFormUserId(e.target.value)}
-                            placeholder="Enter user ID"
-                            className={styles.formInput}
-                        />
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label htmlFor="title" className={styles.formLabel}>Title</label>
-                        <input
-                            id="title"
-                            value={formTitle}
-                            onChange={(e) => setFormTitle(e.target.value)}
-                            placeholder="Enter post title"
-                            className={styles.formInput}
-                        />
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label htmlFor="body" className={styles.formLabel}>Body</label>
-                        <textarea
-                            id="body"
-                            value={formBody}
-                            onChange={(e) => setFormBody(e.target.value)}
-                            placeholder="Enter post content"
-                            className={styles.formTextarea}
-                        />
-                    </div>
-                    <div className={styles.formButtonGroup}>
-                        {isCreating ? (
+            {isCreating && (
+                <div className={styles.modalOverlay} onClick={() => { setIsCreating(false); setFormTitle(""); setFormBody(""); setFormUserId("1"); }}>
+                    <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                        <div className={styles.modalHeader}>
+                            <h3>Create New Post</h3>
+                            <button 
+                                className={styles.closeBtn}
+                                onClick={() => { setIsCreating(false); setFormTitle(""); setFormBody(""); setFormUserId("1"); }}
+                            >
+                                ✕
+                            </button>
+                        </div>
+                        <div className={styles.modalBody}>
+
+                            <div className={styles.formGroup}>
+                                <label htmlFor="createTitle" className={styles.formLabel}>Title</label>
+                                <input
+                                    id="createTitle"
+                                    value={formTitle}
+                                    onChange={(e) => setFormTitle(e.target.value)}
+                                    placeholder="Enter post title"
+                                    className={styles.formInput}
+                                />
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label htmlFor="createBody" className={styles.formLabel}>Body</label>
+                                <textarea
+                                    id="createBody"
+                                    value={formBody}
+                                    onChange={(e) => setFormBody(e.target.value)}
+                                    placeholder="Enter post content"
+                                    className={styles.formTextarea}
+                                />
+                            </div>
+                        </div>
+                        <div className={styles.modalFooter}>
                             <button onClick={handleCreate} className={styles.btnPrimary}>Create (POST)</button>
-                        ) : (
-                            <>
-                                <button
-                                    onClick={() => handleUpdate("PATCH")}
-                                    className={styles.btnPrimary}
-                                    disabled={!editingPost}
-                                >
-                                    Update (PATCH)
-                                </button>
-                                <button
-                                    onClick={() => handleUpdate("PUT")}
-                                    className={styles.btnSecondary}
-                                    disabled={!editingPost}
-                                >
-                                    Update  (PUT)
-                                </button>
-                            </>
-                        )}
-                        <button onClick={() => { setIsCreating(false); setEditingPost(null); }} className={styles.btnCancel}>Cancel</button>
+                            <button onClick={() => { setIsCreating(false); setFormTitle(""); setFormBody(""); setFormUserId("1"); }} className={styles.btnCancel}>Cancel</button>
+                        </div>
                     </div>
                 </div>
             )}
@@ -221,26 +184,19 @@ const Card: React.FC = () => {
             <div className={styles.postsGrid}>
                 {posts.map(post => (
                     <div key={post.id} className={styles.postCard}>
-                        <div className={styles.postHeader}>
+                        <div className={styles.postContent}>
                             <h4 className={styles.postTitle}>{post.title}</h4>
-                            <span className={styles.postId}>ID: {post.id}</span>
+                            <p className={styles.postBody}>{post.body}</p>
                         </div>
-                        <p className={styles.postBody}>{post.body}</p>
                         <div className={styles.postActions}>
                             <button
-                                onClick={() => {
-                                    setEditingPost(post);
-                                    setFormTitle(post.title);
-                                    setFormBody(post.body);
-                                    setFormUserId(post.userId.toString());
-                                    setIsCreating(false);
-                                }}
+                                onClick={() => onEditPost(post)}
                                 className={styles.btnSecondary}
                             >
-                                Edit
+                                Update
                             </button>
                             <button
-                                onClick={() => handleDelete(post.id)}
+                                onClick={() => handleDeleteClick(post.id)}
                                 className={styles.btnDelete}
                             >
                                 Delete
@@ -281,7 +237,51 @@ const Card: React.FC = () => {
                 >
                     Next
                 </button>
+                <label htmlFor="limitInput" className={styles.paginationLabel}>Cards per page:</label>
+                <input
+                    id="limitInput"
+                    type="number"
+                    min="1"
+                    max="50"
+                    value={limit}
+                    onChange={(e) => handleLimitChange(Number(e.target.value))}
+                    className={styles.limitInput}
+                />
+                <span className={styles.paginationInfo}>
+                    Showing {posts.length} cards
+                </span>
             </div>
+
+            {deleteConfirm?.isOpen && (
+                <div className={styles.confirmModalOverlay} onClick={handleDeleteCancel}>
+                    <div className={styles.confirmModal} onClick={(e) => e.stopPropagation()}>
+                        <h3 className={styles.confirmTitle}>Delete Post?</h3>
+                        <p className={styles.confirmMessage}>
+                            Are you sure you want to delete this post? This action cannot be undone.
+                        </p>
+                        <div className={styles.confirmButtonGroup}>
+                            <button 
+                                onClick={handleDeleteConfirm}
+                                className={styles.btnDeleteConfirm}
+                            >
+                                Delete
+                            </button>
+                            <button 
+                                onClick={handleDeleteCancel}
+                                className={styles.btnCancel}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {snackbar && (
+                <div className={`${styles.snackbar} ${styles[snackbar.type]}`}>
+                    {snackbar.message}
+                </div>
+            )}
         </div>
     );
 };
