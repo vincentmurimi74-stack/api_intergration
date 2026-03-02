@@ -1,0 +1,251 @@
+/* Card.module.css - improved modern styles */
+
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #222;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.newPostBtn {
+    background: linear-gradient(90deg, #4f8cff 0%, #38e6c5 100%);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 22px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(79, 140, 255, 0.08);
+    transition: background 0.2s;
+}
+
+.newPostBtn:hover {
+    background: linear-gradient(90deg, #38e6c5 0%, #4f8cff 100%);
+}
+
+.formContainer {
+    background: #f8fafd;
+    border: 1px solid #e0e6ed;
+    border-radius: 10px;
+    padding: 28px 24px 20px 24px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 8px rgba(56, 230, 197, 0.04);
+}
+
+.formGroup {
+    margin-bottom: 18px;
+}
+
+.formLabel {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.formInput,
+.formTextarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 5px;
+    border: 1px solid #b5c9d6;
+    font-size: 1rem;
+    background: #fff;
+    margin-bottom: 2px;
+    transition: border 0.2s;
+}
+
+.formInput:focus,
+.formTextarea:focus {
+    border: 1.5px solid #4f8cff;
+    outline: none;
+}
+
+.formTextarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.formButtonGroup {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.btnPrimary {
+    background: linear-gradient(90deg, #4f8cff 0%, #38e6c5 100%);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(79, 140, 255, 0.08);
+    transition: background 0.2s;
+}
+
+.btnPrimary:hover {
+    background: linear-gradient(90deg, #38e6c5 0%, #4f8cff 100%);
+}
+
+.btnSecondary {
+    background: #fffbe6;
+    color: #ff9800;
+    border: 1.5px solid #ff9800;
+    border-radius: 5px;
+    padding: 8px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btnSecondary:hover {
+    background: #ff9800;
+    color: #fff;
+}
+
+.btnCancel {
+    background: #f5f5f5;
+    color: #888;
+    border: 1.5px solid #ccc;
+    border-radius: 5px;
+    padding: 8px 20px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btnCancel:hover {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.postsGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 22px;
+}
+
+.postCard {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(56, 230, 197, 0.07);
+    padding: 22px 20px 18px 20px;
+    border: 1.5px solid #e0e6ed;
+    transition: box-shadow 0.2s, border 0.2s;
+}
+
+.postCard:hover {
+    box-shadow: 0 8px 24px rgba(79, 140, 255, 0.13);
+    border: 1.5px solid #4f8cff;
+}
+
+.postHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.postTitle {
+    margin: 0;
+    color: #1a1a1a;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.postId {
+    font-size: 0.8rem;
+    color: #4f8cff;
+    background: #f0f7ff;
+    padding: 2px 10px;
+    border-radius: 4px;
+}
+
+.postBody {
+    font-size: 1rem;
+    color: #444;
+    line-height: 1.5;
+    margin-bottom: 18px;
+}
+
+.postActions {
+    display: flex;
+    gap: 10px;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 12px;
+}
+
+.btnDelete {
+    background: #fff0f0;
+    color: #e53935;
+    border: 1.5px solid #e53935;
+    border-radius: 5px;
+    padding: 8px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btnDelete:hover {
+    background: #e53935;
+    color: #fff;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+    margin-top: 32px;
+}
+
+.btnPagination {
+    background: #f0f7ff;
+    color: #4f8cff;
+    border: 1.5px solid #4f8cff;
+    border-radius: 5px;
+    padding: 8px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btnPagination:hover {
+    background: #4f8cff;
+    color: #fff;
+}
+
+.btnPaginationDisabled {
+    background: #f5f5f5;
+    color: #bbb;
+    border: 1.5px solid #ddd;
+    border-radius: 5px;
+    padding: 8px 20px;
+    font-weight: 600;
+    cursor: not-allowed;
+}
+
+.loadingMessage {
+    text-align: center;
+    color: #4f8cff;
+    font-size: 1.2rem;
+    margin-top: 60px;
+}
+
+.errorMessage {
+    color: #e53935;
+    background: #fff0f0;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 18px;
+    border: 1.5px solid #e53935;
+    text-align: center;
+}
