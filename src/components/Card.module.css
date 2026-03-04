@@ -47,8 +47,9 @@
 }
 
 .newPostBtn {
-    background: var(--primary);
-    color: #fff;
+    /* match app header background for page-consistent button color */
+    background: #282c34;
+    color: #ffffff;
     border: none;
     border-radius: 8px;
     padding: 12px 28px;
@@ -60,7 +61,8 @@
 }
 
 .newPostBtn:hover {
-    background: var(--primary-dark);
+    background: #1f2428;
+    /* slightly darker on hover */
     box-shadow: var(--shadow-lg);
     transform: translateY(-2px);
 }
