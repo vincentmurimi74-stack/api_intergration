@@ -127,12 +127,12 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <h2>Card Editor (Page {page}) - Showing {posts.length} cards</h2>
+                <h2>CardView </h2>
                 <button
                     onClick={startCreating}
                     className={styles.newPostBtn}
                 >
-                    + New Card
+                    Post
                 </button>
             </div>
 
