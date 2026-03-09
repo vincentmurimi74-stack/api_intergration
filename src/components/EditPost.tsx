@@ -88,7 +88,7 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess }) => {
                     ← Back to Cards
                 </button>
                 <div className={styles.editPageContent}>
-                    <div className={styles.editPagePreview}>
+                    {/* <div className={styles.editPagePreview}>
                         <h2>Current Post</h2>
                         <div className={styles.previewBox}>
                             <div className={styles.previewField}>
@@ -108,7 +108,7 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess }) => {
                                 <p>{post.body}</p>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                     <div className={styles.editPageForm}>
                         <h2>Edit Post</h2>
                         <div className={styles.formGroup}>
