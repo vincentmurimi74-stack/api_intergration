@@ -1,0 +1,4 @@
+src/components/EditPost.tsx(33,19): error TS7006: Parameter 'res' implicitly has an 'any' type.
+src/components/EditPost.tsx(37,19): error TS7006: Parameter 'res' implicitly has an 'any' type.
+src/services/cardService.ts(1,27): error TS2691: An import path cannot end with a '.ts' extension. Consider importing './api.js' instead.
+src/services/userService.ts(1,27): error TS2691: An import path cannot end with a '.ts' extension. Consider importing './api.js' instead.

@@ -37,6 +37,7 @@
     align-items: center;
     margin-bottom: 32px;
     padding-bottom: 16px;
+    gap: 16px;
 }
 
 .header h1 {
@@ -52,12 +53,16 @@
     color: #ffffff;
     border: none;
     border-radius: 8px;
-    padding: 12px 28px;
+    padding: 10px 20px;
     font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .newPostBtn:hover {
@@ -167,6 +172,53 @@
     background: var(--primary);
     color: #fff;
     box-shadow: var(--shadow-md);
+}
+
+/* icon-only button styles (used for edit and delete actions) */
+.btnIcon {
+    background: var(--primary-light);
+    color: var(--primary);
+    border: 1.5px solid var(--primary);
+    border-radius: 50%;
+    padding: 8px;
+    font-size: 1.2rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btnIcon:hover {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.btnIconDelete {
+    background: rgba(209, 31, 60, 0.08);
+    color: var(--error);
+    border: 1.5px solid var(--error);
+    border-radius: 50%;
+    padding: 8px;
+    font-size: 1.2rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btnIconDelete:hover {
+    background: var(--error);
+    color: #fff;
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
 }
 
 .btnCancel {
@@ -279,6 +331,21 @@
     background: var(--primary);
     color: #fff;
     box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+}
+
+.btnPagination, .btnPaginationDisabled {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btnIconLeft {
+    margin-right: -4px;
+}
+
+.btnIconRight {
+    margin-left: -4px;
 }
 
 .btnPaginationDisabled {
@@ -482,27 +549,41 @@
 }
 
 .editPageCloseBtn {
-    background: none;
-    border: none;
+    background: var(--bg-primary);
+    border: 1px solid var(--neutral-200);
     color: var(--primary);
-    font-size: 0.95rem;
-    font-weight: 600;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    padding: 8px 12px;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
     transition: all 0.2s ease;
-    letter-spacing: 0.3px;
+    box-shadow: var(--shadow-sm);
 }
 
 .editPageCloseBtn:hover {
-    color: var(--primary-dark);
-    transform: translateX(-2px);
+    background: var(--primary-light);
+    border-color: var(--primary);
+    transform: translateX(-4px);
+    box-shadow: var(--shadow-md);
 }
 
 .editPageContent {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 48px;
+    width: 100%;
+}
+
+/* limit width of preview and form for better centering */
+.editPagePreview,
+.editPageForm {
+    width: 100%;
+    max-width: 600px;
 }
 
 .editPagePreview {
@@ -512,9 +593,7 @@
     box-shadow: var(--shadow-md);
     border: 1px solid var(--neutral-200);
     height: fit-content;
-    position: -webkit-sticky;
-    position: sticky;
-    top: 48px;
+    /* sticky not needed when stacked vertically */
 }
 
 .editPagePreview h2 {
@@ -579,17 +658,140 @@
     display: flex;
     gap: 12px;
     margin-top: 28px;
+    justify-content: flex-end;
 }
 
 @media (max-width: 1024px) {
     .editPageContent {
-        grid-template-columns: 1fr;
         gap: 32px;
     }
-    .editPagePreview {
-        position: relative;
-        top: 0;
+}
+
+.commentSection {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--neutral-200);
+    width: 100%;
+    max-width: 600px;
+}
+
+.commentHeaderTitle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+    color: var(--text-primary);
+}
+
+.commentList {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.commentItem {
+    display: flex;
+    gap: 16px;
+    padding: 24px;
+    background: var(--bg-primary);
+    border-radius: 16px;
+    border: 1px solid rgba(22, 26, 29, 0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.commentItem:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    transform: translateY(-2px);
+    border-color: rgba(0, 82, 204, 0.1);
+}
+
+.commentAvatar {
+    width: 48px;
+    height: 48px;
+    background: var(--neutral-100);
+    color: var(--neutral-600);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1rem;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.commentItem:hover .commentAvatar {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.commentContent {
+    flex: 1;
+}
+
+.commentItemHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+}
+
+.commentAuthor {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.commentEmail {
+    font-size: 0.8rem;
+    color: var(--neutral-400);
+    font-weight: 400;
+}
+
+.commentBody {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.commentForm {
+    margin-top: 48px;
+    background: var(--bg-primary);
+    padding: 32px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border: 1px dashed var(--neutral-200);
+    transition: all 0.3s ease;
+}
+
+.commentForm:focus-within {
+    border-style: solid;
+    border-color: var(--primary);
+    box-shadow: 0 8px 32px rgba(0, 82, 204, 0.05);
+}
+
+.commentFormGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media (max-width: 600px) {
+    .commentFormGrid {
+        grid-template-columns: 1fr;
     }
+}
+
+.commentForm button {
+    align-self: flex-end;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
 }
 
 .confirmModalOverlay {

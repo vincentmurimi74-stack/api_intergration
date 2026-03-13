@@ -1,6 +1,7 @@
-import react, {useEffect, useState} from "react";
-import cardService from "../services/cardService.ts";
+import React, {useEffect, useState} from "react";
+import cardService from "../services/cardService";
 import styles from "./Card.module.css";
+import { Pencil, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 
 
 type Card = {
@@ -132,6 +133,7 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
                     onClick={startCreating}
                     className={styles.newPostBtn}
                 >
+                    <Plus size={18} className={styles.btnIconLeft} />
                     Post
                 </button>
             </div>
@@ -191,15 +193,17 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
                         <div className={styles.postActions}>
                             <button
                                 onClick={() => onEditPost(post)}
-                                className={styles.btnSecondary}
+                                className={styles.btnIcon}
+                                aria-label="Edit post"
                             >
-                                Update
+                                <Pencil size={18} />
                             </button>
                             <button
                                 onClick={() => handleDeleteClick(post.id)}
-                                className={styles.btnDelete}
+                                className={styles.btnIconDelete}
+                                aria-label="Delete post"
                             >
-                                Delete
+                                <Trash2 size={18} />
                             </button>
                         </div>
                     </div>
@@ -212,6 +216,7 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
                     onClick={() => setPage(p => p - 1)}
                     className={page === 1 ? styles.btnPaginationDisabled : styles.btnPagination}
                 >
+                    <ChevronLeft size={18} className={styles.btnIconLeft} />
                     Previous
                 </button>
                 <label htmlFor="pageInput">Page </label>
@@ -236,6 +241,7 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
                     className={posts.length < limit ? styles.btnPaginationDisabled : styles.btnPagination}
                 >
                     Next
+                    <ChevronRight size={18} className={styles.btnIconRight} />
                 </button>
                 <label htmlFor="limitInput" className={styles.paginationLabel}>Cards per page:</label>
                 <input

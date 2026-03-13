@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import cardService from "../services/cardService.ts";
-import userService from "../services/userService.ts";
+import cardService from "../services/cardService";
+import userService from "../services/userService";
 import styles from "./Card.module.css";
+import { ArrowLeft, MessageSquare, Send, User, UserCircle } from 'lucide-react';
 
 type Card = {
     id: number;
@@ -23,13 +24,19 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess }) => {
     const [loading, setLoading] = useState(false);
     const [snackbar, setSnackbar] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
     const [users, setUsers] = useState<{id:number;name:string}[]>([]);
+    const [comments, setComments] = useState<{id:number;name:string;email:string;body:string}[]>([]);
+    const [newComment, setNewComment] = useState({name: '', email: '', body: ''});
 
     useEffect(() => {
         // fetch users
         userService.getUsers<{id:number;name:string}[]>()
-            .then(res => res && setUsers(res))
+            .then((res: any) => res && setUsers(res))
             .catch(console.error);
-    }, []);
+        // fetch comments for this post
+        cardService.getComments<{id:number;name:string;email:string;body:string}[]>(post.id)
+            .then((res: any) => res && setComments(res))
+            .catch(console.error);
+    }, [post.id]);
 
     const handleUpdate = async (method: "PUT" | "PATCH") => {
         // detect no changes
@@ -84,31 +91,11 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess }) => {
                 <button 
                     className={styles.editPageCloseBtn}
                     onClick={onBack}
+                    aria-label="Back to cards"
                 >
-                    ← Back to Cards
+                    <ArrowLeft size={24} />
                 </button>
                 <div className={styles.editPageContent}>
-                    {/* <div className={styles.editPagePreview}>
-                        <h2>Current Post</h2>
-                        <div className={styles.previewBox}>
-                            <div className={styles.previewField}>
-                                <label>ID:</label>
-                                <p>{post.id}</p>
-                            </div>
-                            <div className={styles.previewField}>
-                                <label>User:</label>
-                                <p>{users.find(u => u.id === post.userId)?.name || post.userId}</p>
-                            </div>
-                            <div className={styles.previewField}>
-                                <label>Title:</label>
-                                <p>{post.title}</p>
-                            </div>
-                            <div className={styles.previewField}>
-                                <label>Body:</label>
-                                <p>{post.body}</p>
-                            </div>
-                        </div>
-                    </div> */}
                     <div className={styles.editPageForm}>
                         <h2>Edit Post</h2>
                         <div className={styles.formGroup}>
@@ -160,7 +147,82 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess }) => {
                             >
                                 {loading ? "Updating..." : "Update (PUT)"}
                             </button>
-                            <button onClick={onBack} className={styles.btnCancel} disabled={loading}>Cancel</button>
+                        </div>
+                    </div>
+
+                    {/* comments section */}
+                    <div className={styles.commentSection}>
+                        <h3 className={styles.commentHeaderTitle}>
+                            <MessageSquare size={20} />
+                            Comments ({comments.length})
+                        </h3>
+
+                        <form
+                            className={styles.commentForm}
+                            onSubmit={async e => {
+                                e.preventDefault();
+                                try {
+                                    const created = await cardService.createComment<{id:number;name:string;email:string;body:string}>(
+                                        { ...newComment, postId: post.id }
+                                    );
+                                    if (created) {
+                                        setComments(prev => [...prev, created]);
+                                        setNewComment({ name: '', email: '', body: '' });
+                                        setSnackbar({ message: 'Comment added!', type: 'success' });
+                                        setTimeout(() => setSnackbar(null), 3000);
+                                    }
+                                } catch (err: any) {
+                                    setSnackbar({ message: err.message || 'Failed to add comment', type: 'error' });
+                                    setTimeout(() => setSnackbar(null), 3000);
+                                }
+                            }}
+                        >
+                            <div className={styles.commentFormGrid}>
+                                <input
+                                    type="text"
+                                    placeholder="Your name"
+                                    value={newComment.name}
+                                    onChange={e => setNewComment(prev => ({ ...prev, name: e.target.value }))}
+                                    className={styles.formInput}
+                                    required
+                                />
+                                <input
+                                    type="email"
+                                    placeholder="Your email"
+                                    value={newComment.email}
+                                    onChange={e => setNewComment(prev => ({ ...prev, email: e.target.value }))}
+                                    className={styles.formInput}
+                                    required
+                                />
+                            </div>
+                            <textarea
+                                placeholder="Write your thoughts..."
+                                value={newComment.body}
+                                onChange={e => setNewComment(prev => ({ ...prev, body: e.target.value }))}
+                                className={styles.formTextarea}
+                                required
+                            />
+                            <button type="submit" className={styles.btnPrimary}>
+                                <Send size={16} />
+                                Post Comment
+                            </button>
+                        </form>
+                        
+                        <div className={styles.commentList}>
+                            {comments.map(c => (
+                                <div key={c.id} className={styles.commentItem}>
+                                    <div className={styles.commentAvatar}>
+                                        {c.name.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div className={styles.commentContent}>
+                                        <div className={styles.commentItemHeader}>
+                                            <span className={styles.commentAuthor}>{c.name}</span>
+                                            <span className={styles.commentEmail}>{c.email}</span>
+                                        </div>
+                                        <p className={styles.commentBody}>{c.body}</p>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
