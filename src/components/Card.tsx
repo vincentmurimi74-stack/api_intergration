@@ -128,7 +128,8 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <h2>CardView </h2>
+                <h2 style={{ textAlign: 'center', fontSize: '3.5rem', color: 'var(--primary-color)', letterSpacing: '-0.06em', fontWeight: 400 }}>Card <span style={{ color: '#64748B', fontWeight: 400 }}>Post</span>
+                    </h2>
                 <button
                     onClick={startCreating}
                     className={styles.newPostBtn}
