@@ -1,6 +1,7 @@
-import react, {useEffect, useState} from "react";
-import cardService from "../services/cardService.ts";
+import React, {useEffect, useState} from "react";
+import cardService from "../services/cardService";
 import styles from "./Card.module.css";
+import { Pencil, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 
 
 type Card = {
@@ -134,15 +135,20 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
     return (
         <div className={styles.container}>
             <div className={styles.header}>
+<<<<<<< HEAD
 <<<<<<< Updated upstream
                 <h2>CardView </h2>
 =======
                 <h2>Card Post</h2>
 >>>>>>> Stashed changes
+=======
+                <h2>Card Post</h2>
+>>>>>>> 3b85ab83faeaa0ab517780539d499a5e3958a3dc
                 <button
                     onClick={startCreating}
                     className={styles.newPostBtn}
                 >
+                    <Plus size={18} className={styles.btnIconLeft} />
                     Post
                 </button>
             </div>
@@ -202,15 +208,17 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
                         <div className={styles.postActions}>
                             <button
                                 onClick={() => onEditPost(post)}
-                                className={styles.btnSecondary}
+                                className={styles.btnIcon}
+                                aria-label="Edit post"
                             >
-                                Update
+                                <Pencil size={18} />
                             </button>
                             <button
                                 onClick={() => handleDeleteClick(post.id)}
-                                className={styles.btnDelete}
+                                className={styles.btnIconDelete}
+                                aria-label="Delete post"
                             >
-                                Delete
+                                <Trash2 size={18} />
                             </button>
                         </div>
                     </div>
@@ -218,6 +226,7 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
             </div>
 
             <div className={styles.pagination}>
+<<<<<<< HEAD
 <<<<<<< Updated upstream
                 <button
                     disabled={page === 1}
@@ -263,6 +272,8 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
                     Showing {posts.length} cards
                 </span>
 =======
+=======
+>>>>>>> 3b85ab83faeaa0ab517780539d499a5e3958a3dc
                 <div className={styles.paginationSection}>
                     <button
                         disabled={page === 1}
@@ -301,7 +312,11 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
 
                 <div className={styles.paginationSection}>
                     <div className={styles.paginationSection}>
+<<<<<<< HEAD
                         <label htmlFor="limitInput" className={styles.paginationLabel}>Cards / page</label>
+=======
+                        <label htmlFor="limitInput" className={styles.paginationLabel}>Limit</label>
+>>>>>>> 3b85ab83faeaa0ab517780539d499a5e3958a3dc
                         <input
                             id="limitInput"
                             type="text"
@@ -313,10 +328,16 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
                         />
                     </div>
                     <span className={styles.paginationInfo}>
+<<<<<<< HEAD
                         {posts.length} cards
                     </span>
                 </div>
 >>>>>>> Stashed changes
+=======
+                        {posts.length} entries
+                    </span>
+                </div>
+>>>>>>> 3b85ab83faeaa0ab517780539d499a5e3958a3dc
             </div>
 
             {deleteConfirm?.isOpen && (

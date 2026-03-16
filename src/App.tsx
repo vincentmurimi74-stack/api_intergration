@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
-import Card from './components/Card.tsx';
-import EditPost from './components/EditPost.tsx';
+import Card from './components/Card';
+import EditPost from './components/EditPost';
 
 type CardType = {
     id: number;

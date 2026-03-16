@@ -1,6 +1,10 @@
 .App {
+<<<<<<< HEAD
 <<<<<<< Updated upstream
     text-align: center;
+=======
+    text-align: left;
+>>>>>>> 3b85ab83faeaa0ab517780539d499a5e3958a3dc
 }
 
 .App-logo {
@@ -23,6 +27,7 @@
     justify-content: center;
     font-size: calc(10px + 2vmin);
     color: white;
+    text-align: center;
 }
 
 .App-link {
