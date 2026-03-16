@@ -1,4 +1,5 @@
 .App {
+<<<<<<< Updated upstream
     text-align: center;
 }
 
@@ -35,4 +36,7 @@
     to {
         transform: rotate(360deg);
     }
+=======
+  min-height: 100vh;
+>>>>>>> Stashed changes
 }
