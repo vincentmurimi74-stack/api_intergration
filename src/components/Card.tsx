@@ -1,18 +1,18 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useCallback} from "react";
 import cardService from "../services/cardService";
 import styles from "./Card.module.css";
 import { Pencil, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 
 
-type Card = {
+type PostType = {
     id: number;
     title: string;
     body: string;
     userId: number;
 }
 
-const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number }> = ({ onEditPost, refreshTrigger }) => {
-    const [posts, setPosts] = useState<Card[]>([]);
+const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: number }> = ({ onEditPost, refreshTrigger }) => {
+    const [posts, setPosts] = useState<PostType[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(1);
@@ -31,11 +31,11 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
     // Delete confirmation state
     const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; postId: number | null } | null>(null);
 
-    const loadPosts = async () => {
+    const loadPosts = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
-            const data = await cardService.getPosts<Card[]>(page, limit);
+            const data = await cardService.getPosts<PostType[]>(page, limit);
             if (data) {
                 setPosts(data);
             }
@@ -44,14 +44,14 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
         } finally {
             setLoading(false);
         }
-    };
+    }, [page, limit]);
 
 
     useEffect(() => {
         if (page > 0 && limit > 0) {
             loadPosts();
         }
-    }, [page, limit, refreshTrigger]);
+    }, [loadPosts, refreshTrigger]);
 
     const handleLimitChange = (val: string) => {
         if (val === "") {
@@ -73,7 +73,7 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
                 body: formBody,
                 userId: parseInt(formUserId) || 1,
             };
-            const created = await cardService.createPost<Card>(newPost);
+            const created = await cardService.createPost<PostType>(newPost);
             if (created) {
                 setSnackbar({ message: `Post created successfully!`, type: 'success' });
                 setTimeout(() => setSnackbar(null), 3000);
