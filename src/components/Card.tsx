@@ -1,6 +1,7 @@
-import react, {useEffect, useState} from "react";
-import cardService from "../services/cardService.ts";
+import React, {useEffect, useState} from "react";
+import cardService from "../services/cardService";
 import styles from "./Card.module.css";
+import { Pencil, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 
 
 type Card = {
@@ -47,13 +48,20 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
 
 
     useEffect(() => {
-        loadPosts();
+        if (page > 0 && limit > 0) {
+            loadPosts();
+        }
     }, [page, limit, refreshTrigger]);
 
-    const handleLimitChange = (newLimit: number) => {
-        if (newLimit > 0) {
-            setLimit(newLimit);
-            setPage(1); // Reset to first page when limit changes
+    const handleLimitChange = (val: string) => {
+        if (val === "") {
+            setLimit(0); // Allow empty state
+            return;
+        }
+        const num = parseInt(val);
+        if (!isNaN(num) && num > 0) {
+            setLimit(num);
+            setPage(1);
         }
     };
 
@@ -127,11 +135,12 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <h2>CardView </h2>
+                <h2>Card Post</h2>
                 <button
                     onClick={startCreating}
                     className={styles.newPostBtn}
                 >
+                    <Plus size={18} className={styles.btnIconLeft} />
                     Post
                 </button>
             </div>
@@ -191,15 +200,17 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
                         <div className={styles.postActions}>
                             <button
                                 onClick={() => onEditPost(post)}
-                                className={styles.btnSecondary}
+                                className={styles.btnIcon}
+                                aria-label="Edit post"
                             >
-                                Update
+                                <Pencil size={18} />
                             </button>
                             <button
                                 onClick={() => handleDeleteClick(post.id)}
-                                className={styles.btnDelete}
+                                className={styles.btnIconDelete}
+                                aria-label="Delete post"
                             >
-                                Delete
+                                <Trash2 size={18} />
                             </button>
                         </div>
                     </div>
@@ -207,49 +218,59 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
             </div>
 
             <div className={styles.pagination}>
-                <button
-                    disabled={page === 1}
-                    onClick={() => setPage(p => p - 1)}
-                    className={page === 1 ? styles.btnPaginationDisabled : styles.btnPagination}
-                >
-                    Previous
-                </button>
-                <label htmlFor="pageInput">Page </label>
-                <input
-                    id="pageInput"
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    value={page === 0 ? '' : page}
-                    onChange={e => {
-                        const val = e.target.value;
-                        if (val === '' || /^[0-9]+$/.test(val)) {
-                            setPage(val === '' ? 0 : Number(val));
-                        }
-                    }}
-                    placeholder="Enter page number"
-                    className={styles.paginationInput}
-                />
-                <button
-                    disabled={posts.length < limit}
-                    onClick={() => setPage(p => p + 1)}
-                    className={posts.length < limit ? styles.btnPaginationDisabled : styles.btnPagination}
-                >
-                    Next
-                </button>
-                <label htmlFor="limitInput" className={styles.paginationLabel}>Cards per page:</label>
-                <input
-                    id="limitInput"
-                    type="number"
-                    min="1"
-                    max="50"
-                    value={limit}
-                    onChange={(e) => handleLimitChange(Number(e.target.value))}
-                    className={styles.limitInput}
-                />
-                <span className={styles.paginationInfo}>
-                    Showing {posts.length} cards
-                </span>
+                <div className={styles.paginationSection}>
+                    <button
+                        disabled={page === 1}
+                        onClick={() => setPage(p => p - 1)}
+                        className={page === 1 ? styles.btnPaginationDisabled : styles.btnPagination}
+                    >
+                        <ChevronLeft size={16} />
+                        Prev
+                    </button>
+                    <div className={styles.paginationSection}>
+                        <label htmlFor="pageInput">Page</label>
+                        <input
+                            id="pageInput"
+                            type="text"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            value={page === 0 ? '' : page}
+                            onChange={e => {
+                                const val = e.target.value;
+                                if (val === '' || /^[0-9]+$/.test(val)) {
+                                    setPage(val === '' ? 0 : Number(val));
+                                }
+                            }}
+                            className={styles.paginationInput}
+                        />
+                    </div>
+                    <button
+                        disabled={posts.length < limit}
+                        onClick={() => setPage(p => p + 1)}
+                        className={posts.length < limit ? styles.btnPaginationDisabled : styles.btnPagination}
+                    >
+                        Next
+                        <ChevronRight size={16} />
+                    </button>
+                </div>
+
+                <div className={styles.paginationSection}>
+                    <div className={styles.paginationSection}>
+                        <label htmlFor="limitInput" className={styles.paginationLabel}>Limit</label>
+                        <input
+                            id="limitInput"
+                            type="text"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            value={limit === 0 ? '' : limit}
+                            onChange={(e) => handleLimitChange(e.target.value)}
+                            className={styles.limitInput}
+                        />
+                    </div>
+                    <span className={styles.paginationInfo}>
+                        {posts.length} entries
+                    </span>
+                </div>
             </div>
 
             {deleteConfirm?.isOpen && (

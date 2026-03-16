@@ -1,4 +1,4 @@
-import { apiClient } from "./api.ts";
+import { apiClient } from "./api";
 const API_BASE_URL = '/users';
 
 export const UserService = {
