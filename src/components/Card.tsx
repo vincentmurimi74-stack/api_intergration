@@ -135,15 +135,7 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-                <h2>CardView </h2>
-=======
                 <h2>Card Post</h2>
->>>>>>> Stashed changes
-=======
-                <h2>Card Post</h2>
->>>>>>> 3b85ab83faeaa0ab517780539d499a5e3958a3dc
                 <button
                     onClick={startCreating}
                     className={styles.newPostBtn}
@@ -226,54 +218,6 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
             </div>
 
             <div className={styles.pagination}>
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-                <button
-                    disabled={page === 1}
-                    onClick={() => setPage(p => p - 1)}
-                    className={page === 1 ? styles.btnPaginationDisabled : styles.btnPagination}
-                >
-                    Previous
-                </button>
-                <label htmlFor="pageInput">Page </label>
-                <input
-                    id="pageInput"
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    value={page === 0 ? '' : page}
-                    onChange={e => {
-                        const val = e.target.value;
-                        if (val === '' || /^[0-9]+$/.test(val)) {
-                            setPage(val === '' ? 0 : Number(val));
-                        }
-                    }}
-                    placeholder="Enter page number"
-                    className={styles.paginationInput}
-                />
-                <button
-                    disabled={posts.length < limit}
-                    onClick={() => setPage(p => p + 1)}
-                    className={posts.length < limit ? styles.btnPaginationDisabled : styles.btnPagination}
-                >
-                    Next
-                </button>
-                <label htmlFor="limitInput" className={styles.paginationLabel}>Cards per page:</label>
-                <input
-                    id="limitInput"
-                    type="number"
-                    min="1"
-                    max="50"
-                    value={limit}
-                    onChange={(e) => handleLimitChange(Number(e.target.value))}
-                    className={styles.limitInput}
-                />
-                <span className={styles.paginationInfo}>
-                    Showing {posts.length} cards
-                </span>
-=======
-=======
->>>>>>> 3b85ab83faeaa0ab517780539d499a5e3958a3dc
                 <div className={styles.paginationSection}>
                     <button
                         disabled={page === 1}
@@ -312,11 +256,7 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
 
                 <div className={styles.paginationSection}>
                     <div className={styles.paginationSection}>
-<<<<<<< HEAD
-                        <label htmlFor="limitInput" className={styles.paginationLabel}>Cards / page</label>
-=======
                         <label htmlFor="limitInput" className={styles.paginationLabel}>Limit</label>
->>>>>>> 3b85ab83faeaa0ab517780539d499a5e3958a3dc
                         <input
                             id="limitInput"
                             type="text"
@@ -328,16 +268,9 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
                         />
                     </div>
                     <span className={styles.paginationInfo}>
-<<<<<<< HEAD
-                        {posts.length} cards
-                    </span>
-                </div>
->>>>>>> Stashed changes
-=======
                         {posts.length} entries
                     </span>
                 </div>
->>>>>>> 3b85ab83faeaa0ab517780539d499a5e3958a3dc
             </div>
 
             {deleteConfirm?.isOpen && (
@@ -375,5 +308,3 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
 };
 
 export default Card;
-
-

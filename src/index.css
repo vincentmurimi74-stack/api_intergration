@@ -1,36 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-=======
-:root {
-  --bg-color: #fcfcfc;
-  --text-primary: #1a1a1a;
-  --text-secondary: #64748b;
-  --accent: #6366f1;
-  --border-color: #e2e8f0;
-  --surface: #ffffff;
-  --radius: 8px;
-  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-* {
-  box-sizing: border-box;
->>>>>>> Stashed changes
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-body {
-  margin: 0;
-  background-color: var(--bg-color);
-  color: var(--text-primary);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  line-height: 1.5;
-=======
 :root {
   /* Colors - Zinc Palette */
   --bg-color: #f8fafc;
@@ -68,15 +35,11 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
->>>>>>> 3b85ab83faeaa0ab517780539d499a5e3958a3dc
 }
 
 button {
   cursor: pointer;
   font-family: inherit;
-<<<<<<< HEAD
-=======
   border: none;
   background: none;
->>>>>>> 3b85ab83faeaa0ab517780539d499a5e3958a3dc
 }

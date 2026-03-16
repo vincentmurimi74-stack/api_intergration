@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import cardService from "../services/cardService";
 import userService from "../services/userService";
 import styles from "./Card.module.css";
-import { ArrowLeft, MessageSquare, Send, User, UserCircle } from 'lucide-react';
+import { ArrowLeft, MessageSquare, Send } from 'lucide-react';
 
 type Card = {
     id: number;
@@ -134,18 +134,11 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess }) => {
                         </div>
                         <div className={styles.editPageButtonGroup}>
                             <button
-                                onClick={() => handleUpdate("PATCH")}
+                                onClick={() => handleUpdate("PUT")}
                                 className={styles.btnPrimary}
                                 disabled={loading}
                             >
-                                {loading ? "Updating..." : "Update (PATCH)"}
-                            </button>
-                            <button
-                                onClick={() => handleUpdate("PUT")}
-                                className={styles.btnSecondary}
-                                disabled={loading}
-                            >
-                                {loading ? "Updating..." : "Update (PUT)"}
+                                {loading ? "Updating..." : "Update Post"}
                             </button>
                         </div>
                     </div>
