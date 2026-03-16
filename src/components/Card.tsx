@@ -135,7 +135,10 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <h2>Card Post</h2>
+                <h2 className={styles.mainTitle}>
+                    <span className={styles.cardWord}>Card</span>
+                    <span className={styles.postWord}>Post</span>
+                </h2>
                 <button
                     onClick={startCreating}
                     className={styles.newPostBtn}
