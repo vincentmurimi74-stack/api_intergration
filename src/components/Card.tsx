@@ -256,7 +256,7 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
 
                 <div className={styles.paginationSection}>
                     <div className={styles.paginationSection}>
-                        <label htmlFor="limitInput" className={styles.paginationLabel}>Cards / page</label>
+                        <label htmlFor="limitInput" className={styles.paginationLabel}>Limit</label>
                         <input
                             id="limitInput"
                             type="text"
@@ -268,7 +268,7 @@ const Card: React.FC<{ onEditPost: (post: Card) => void; refreshTrigger: number 
                         />
                     </div>
                     <span className={styles.paginationInfo}>
-                        {posts.length} cards
+                        {posts.length} entries
                     </span>
                 </div>
             </div>
