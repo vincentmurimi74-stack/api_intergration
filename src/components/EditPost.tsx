@@ -104,13 +104,16 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess }) => {
                                 id="editUserId"
                                 value={formUserId}
                                 onChange={(e) => setFormUserId(e.target.value)}
-                                className={styles.formInput}
+                                className={`${styles.formInput} ${!formUserId.trim() ? styles.errorInput : ""}`}
                             >
                                 <option value="">Select user</option>
                                 {users.map(u => (
                                     <option key={u.id} value={u.id}>{u.name}</option>
                                 ))}
                             </select>
+                            {!formUserId.trim() && (
+                                <span className={styles.validationWarning}>Please select a user</span>
+                            )}
                         </div>
                         <div className={styles.formGroup}>
                             <label htmlFor="editTitle" className={styles.formLabel}>Title</label>
@@ -119,8 +122,11 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess }) => {
                                 value={formTitle}
                                 onChange={(e) => setFormTitle(e.target.value)}
                                 placeholder="Enter post title"
-                                className={styles.formInput}
+                                className={`${styles.formInput} ${!formTitle.trim() ? styles.errorInput : ""}`}
                             />
+                            {!formTitle.trim() && (
+                                <span className={styles.validationWarning}>Title is required</span>
+                            )}
                         </div>
                         <div className={styles.formGroup}>
                             <label htmlFor="editBody" className={styles.formLabel}>Body</label>
@@ -129,17 +135,20 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess }) => {
                                 value={formBody}
                                 onChange={(e) => setFormBody(e.target.value)}
                                 placeholder="Enter post content"
-                                className={styles.formTextarea}
+                                className={`${styles.formTextarea} ${!formBody.trim() ? styles.errorTextarea : ""}`}
                             />
+                            {!formBody.trim() && (
+                                <span className={styles.validationWarning}>Body content is required</span>
+                            )}
                         </div>
                         <div className={styles.editPageButtonGroup}>
-                            <button
-                                onClick={() => handleUpdate("PUT")}
-                                className={styles.btnPrimary}
-                                disabled={loading}
-                            >
-                                {loading ? "Updating..." : "Update Post"}
-                            </button>
+                                <button
+                                    onClick={() => handleUpdate("PUT")}
+                                    className={styles.btnPrimary}
+                                    disabled={loading || !formTitle.trim() || !formBody.trim() || !formUserId.trim()}
+                                >
+                                    {loading ? "Updating..." : "Update Post"}
+                                </button>
                         </div>
                     </div>
 

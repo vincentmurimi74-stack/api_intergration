@@ -1,3 +1,58 @@
 .App {
   min-height: 100vh;
 }
+.App {
+  text-align: center;
+}
+
+.cookie-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+  padding: 24px;
+}
+
+.cookie-banner {
+  background: white;
+  padding: 48px;
+  border-radius: 32px;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.cookie-banner h2 {
+  margin: 0 0 16px 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.cookie-banner p {
+  color: #64748b;
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+.cookie-accept-btn {
+  background: #0f172a;
+  color: white;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 100px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.cookie-accept-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.4);
+  background: #1e293b;
+}

@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useCallback} from "react";
 import cardService from "../services/cardService";
 import styles from "./Card.module.css";
-import { Pencil, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Pencil, Trash2, Plus, ChevronLeft, ChevronRight, Search } from 'lucide-react';
 
 
 type PostType = {
@@ -17,6 +17,7 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(4);
+    const [searchQuery, setSearchQuery] = useState("");
 
 
     // Form state for new post
@@ -24,6 +25,7 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
     const [formBody, setFormBody] = useState("");
     const [formUserId, setFormUserId] = useState<string>("1");
     const [isCreating, setIsCreating] = useState(false);
+    const [viewingPost, setViewingPost] = useState<PostType | null>(null);
 
     // Snackbar state
     const [snackbar, setSnackbar] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -51,7 +53,7 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
         if (page > 0 && limit > 0) {
             loadPosts();
         }
-    }, [loadPosts, refreshTrigger]);
+    }, [loadPosts, refreshTrigger, page, limit]);
 
     const handleLimitChange = (val: string) => {
         if (val === "") {
@@ -130,6 +132,17 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
         setFormUserId("1");
     };
 
+    const limitWords = (text: string, count: number) => {
+        const words = text.split(' ');
+        if (words.length <= count) return text;
+        return words.slice(0, count).join(' ') + '...';
+    };
+
+    const filteredPosts = posts.filter(post => 
+        post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.body.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     if (loading && posts.length === 0) return <div className={styles.loadingMessage}>Loading posts...</div>;
 
     return (
@@ -144,8 +157,21 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
                     className={styles.newPostBtn}
                 >
                     <Plus size={18} className={styles.btnIconLeft} />
-                    Post
+                    <span className={styles.btnText}>Post</span>
                 </button>
+            </div>
+
+            <div className={styles.searchContainer}>
+                <div className={styles.searchWrapper}>
+                    <Search size={18} className={styles.searchIcon} />
+                    <input
+                        type="text"
+                        placeholder="Search posts..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className={styles.searchInput}
+                    />
+                </div>
             </div>
 
             {error && <div className={styles.errorMessage}>{error}</div>}
@@ -171,8 +197,11 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
                                     value={formTitle}
                                     onChange={(e) => setFormTitle(e.target.value)}
                                     placeholder="Enter post title"
-                                    className={styles.formInput}
+                                    className={`${styles.formInput} ${!formTitle.trim() ? styles.errorInput : ""}`}
                                 />
+                                {!formTitle.trim() && (
+                                    <span className={styles.validationWarning}>Title is required</span>
+                                )}
                             </div>
                             <div className={styles.formGroup}>
                                 <label htmlFor="createBody" className={styles.formLabel}>Body</label>
@@ -181,12 +210,21 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
                                     value={formBody}
                                     onChange={(e) => setFormBody(e.target.value)}
                                     placeholder="Enter post content"
-                                    className={styles.formTextarea}
+                                    className={`${styles.formTextarea} ${!formBody.trim() ? styles.errorTextarea : ""}`}
                                 />
+                                {!formBody.trim() && (
+                                    <span className={styles.validationWarning}>Body content is required</span>
+                                )}
                             </div>
                         </div>
                         <div className={styles.modalFooter}>
-                            <button onClick={handleCreate} className={styles.btnPrimary}>Create (POST)</button>
+                            <button 
+                                onClick={handleCreate} 
+                                className={styles.btnPrimary}
+                                disabled={loading || !formTitle.trim() || !formBody.trim()}
+                            >
+                                {loading ? "Creating..." : "Create (POST)"}
+                            </button>
                             <button onClick={() => { setIsCreating(false); setFormTitle(""); setFormBody(""); setFormUserId("1"); }} className={styles.btnCancel}>Cancel</button>
                         </div>
                     </div>
@@ -194,22 +232,22 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
             )}
 
             <div className={styles.postsGrid}>
-                {posts.map(post => (
-                    <div key={post.id} className={styles.postCard}>
+                {filteredPosts.map(post => (
+                    <div key={post.id} className={styles.postCard} onClick={() => setViewingPost(post)}>
                         <div className={styles.postContent}>
-                            <h4 className={styles.postTitle}>{post.title}</h4>
+                            <h4 className={styles.postTitle}>{limitWords(post.title, 2)}</h4>
                             <p className={styles.postBody}>{post.body}</p>
                         </div>
                         <div className={styles.postActions}>
                             <button
-                                onClick={() => onEditPost(post)}
+                                onClick={(e) => { e.stopPropagation(); onEditPost(post); }}
                                 className={styles.btnIcon}
                                 aria-label="Edit post"
                             >
                                 <Pencil size={18} />
                             </button>
                             <button
-                                onClick={() => handleDeleteClick(post.id)}
+                                onClick={(e) => { e.stopPropagation(); handleDeleteClick(post.id); }}
                                 className={styles.btnIconDelete}
                                 aria-label="Delete post"
                             >
@@ -221,45 +259,71 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
             </div>
 
             <div className={styles.pagination}>
-                <div className={styles.paginationSection}>
+                <div className={styles.googlePagination}>
+                    {/* C a r d P */}
+                    <span className={`${styles.googleText} ${styles.g1}`}>C</span>
+                    <span className={`${styles.googleText} ${styles.l}`}>a</span>
+                    <span className={`${styles.googleText} ${styles.e}`}>r</span>
+                    <span className={`${styles.googleText} ${styles.g1}`}>d</span>
+                    <span className={`${styles.googleText} ${styles.e}`}>P</span>
+
+                    <div 
+                        className={styles.pageItem}
+                        onClick={() => page > 1 && setPage(p => p - 1)}
+                    >
+                        <span className={`${styles.googleO} ${page === 1 ? styles['o-active'] : styles['o-inactive']}`}>o</span>
+                    </div>
+
+                    {/* Generate 'o's for pages */}
+                    {Array.from({ length: Math.min(10, Math.ceil(posts.length / limit) || 1) }).map((_, i) => {
+                        const pageNum = i + 1;
+                        const isCurrentPage = page === pageNum;
+                        
+                        return (
+                            <div 
+                                key={pageNum} 
+                                className={styles.pageItem}
+                                onClick={() => setPage(pageNum)}
+                            >
+                                <span className={`${styles.googleO} ${isCurrentPage ? styles['o-active'] : styles['o-inactive']}`}>
+                                    o
+                                </span>
+                                <span className={isCurrentPage ? styles.pageNumberActive : styles.pageNumber}>
+                                    {pageNum}
+                                </span>
+                            </div>
+                        );
+                    })}
+
+                    <span className={`${styles.googleText} ${styles.l}`}>s</span>
+                    <span className={`${styles.googleText} ${styles.g1}`}>t</span>
+                </div>
+
+                <div className={styles.navLinks}>
                     <button
                         disabled={page === 1}
                         onClick={() => setPage(p => p - 1)}
-                        className={page === 1 ? styles.btnPaginationDisabled : styles.btnPagination}
+                        className={styles.navLink}
+                        aria-label="Previous Page"
                     >
                         <ChevronLeft size={16} />
                         Prev
                     </button>
-                    <div className={styles.paginationSection}>
-                        <label htmlFor="pageInput">Page</label>
-                        <input
-                            id="pageInput"
-                            type="text"
-                            inputMode="numeric"
-                            pattern="[0-9]*"
-                            value={page === 0 ? '' : page}
-                            onChange={e => {
-                                const val = e.target.value;
-                                if (val === '' || /^[0-9]+$/.test(val)) {
-                                    setPage(val === '' ? 0 : Number(val));
-                                }
-                            }}
-                            className={styles.paginationInput}
-                        />
-                    </div>
+                    
                     <button
                         disabled={posts.length < limit}
                         onClick={() => setPage(p => p + 1)}
-                        className={posts.length < limit ? styles.btnPaginationDisabled : styles.btnPagination}
+                        className={styles.navLink}
+                        aria-label="Next Page"
                     >
                         Next
                         <ChevronRight size={16} />
                     </button>
                 </div>
 
-                <div className={styles.paginationSection}>
+                <div className={styles.paginationMeta}>
                     <div className={styles.paginationSection}>
-                        <label htmlFor="limitInput" className={styles.paginationLabel}>Limit</label>
+                        <label htmlFor="limitInput">Limit:</label>
                         <input
                             id="limitInput"
                             type="text"
@@ -270,8 +334,8 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
                             className={styles.limitInput}
                         />
                     </div>
-                    <span className={styles.paginationInfo}>
-                        {posts.length} entries
+                    <span>
+                        Total: {posts.length} entries
                     </span>
                 </div>
             </div>
@@ -296,6 +360,40 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
                             >
                                 Cancel
                             </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {viewingPost && (
+                <div className={styles.modalOverlay} onClick={() => setViewingPost(null)}>
+                    <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                        <div className={styles.modalHeader}>
+                            <h3>Post Details</h3>
+                            <button 
+                                className={styles.closeBtn}
+                                onClick={() => setViewingPost(null)}
+                            >
+                                ✕
+                            </button>
+                        </div>
+                        <div className={styles.modalBody}>
+                            <div className={styles.detailItem}>
+                                <div className={styles.detailUserId}>Post #{viewingPost.id}</div>
+                            </div>
+                            <div className={styles.detailItem}>
+                                <h4 className={styles.postTitle} style={{ minHeight: 'auto', WebkitLineClamp: 'unset', height: 'auto', textAlign: 'left' }}>
+                                    {viewingPost.title}
+                                </h4>
+                            </div>
+                            <div className={styles.detailItem}>
+                                <p className={styles.postBody} style={{ minHeight: 'auto', WebkitLineClamp: 'unset', height: 'auto', textAlign: 'left' }}>
+                                    {viewingPost.body}
+                                </p>
+                            </div>
+                        </div>
+                        <div className={styles.modalFooter}>
+                            <button onClick={() => setViewingPost(null)} className={styles.btnPrimary}>Close</button>
                         </div>
                     </div>
                 </div>
