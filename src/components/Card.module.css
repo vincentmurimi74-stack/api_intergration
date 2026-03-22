@@ -262,7 +262,7 @@
 
 .searchInput {
   width: 100%;
-  padding: 16px 20px 16px 52px;
+  padding: 16px 160px 16px 52px;
   border-radius: var(--radius-pill);
   border: 1px solid var(--border-color);
   background: var(--surface);
@@ -277,6 +277,81 @@
   border-color: var(--accent);
   box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.05);
   background: white;
+}
+
+/* Search Context Styles */
+.contextContainer {
+  position: absolute;
+  right: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.contextButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-pill);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: var(--transition-pure);
+}
+
+.contextButton:hover {
+  background: var(--text-primary);
+  color: white;
+  border-color: var(--text-primary);
+}
+
+.contextMenu {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 8px;
+  min-width: 180px;
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  animation: fadeInDown 0.2s ease-out;
+}
+
+.contextOption {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.contextOption:hover {
+  background: var(--bg-color);
+}
+
+.menuOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Forms - Refined */
@@ -378,92 +453,99 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: 60px;
-  padding: 40px 0;
+  margin-top: 80px;
+  padding: 60px 0;
   border-top: 1px solid var(--border-color);
-  font-family: arial, sans-serif;
 }
 
-.googlePagination {
+.paginationBranding {
   display: flex;
-  align-items: flex-end;
-  margin-bottom: 8px;
+  gap: 8px;
+  font-size: 1.75rem;
+  font-family: "Times New Roman", Times, serif;
+  margin-bottom: 32px;
   user-select: none;
 }
 
-/* Base text styling for G, l, e */
-.googleText {
-  font-size: 40px;
-  font-weight: bold;
-  line-height: 1;
+.cardText {
+  color: #000000;
+  font-weight: 900;
 }
 
-.g1 { color: #4285F4; } /* Blue G */
-.l { color: #34A853; }  /* Green l */
-.e { color: #EA4335; }  /* Red e */
+.postText {
+  color: #94a3b8;
+  font-weight: 400;
+}
 
-/* Page item container (contains the 'o' and the number below it) */
+.paginationControls {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  user-select: none;
+}
+
+.pageNumbers {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Page item container */
 .pageItem {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
   cursor: pointer;
+  width: 36px;
+  height: 44px;
+  border-radius: 8px;
+  transition: var(--transition-pure);
+  background: transparent;
+  border: 1px solid transparent;
 }
 
-/* The 'o' element */
-.googleO {
-  font-size: 40px;
-  font-weight: bold;
-  line-height: 1;
+.pageItemActive {
+  background: #f1f5f9;
+  border-color: #94a3b8;
 }
 
-/* Yellow o for inactive pages, Red o for active page */
-.o-inactive { color: #FBBC05; }
-.o-active { color: #EA4335; } 
+.pageItem:hover:not(.pageItemActive) {
+  background: var(--bg-color);
+}
 
-/* The number below the 'o' */
 .pageNumber {
-  font-size: 14px;
-  color: #4285F4;
-  margin-top: 2px;
-  text-decoration: none;
+  font-size: 1.125rem;
+  color: #0f172a;
+  font-weight: 700;
 }
 
 .pageNumberActive {
-  font-size: 14px;
-  color: #000;
-  margin-top: 2px;
-  cursor: default;
-}
-
-/* The Previous / Next Text Links */
-.navLinks {
-  display: flex;
-  gap: 40px;
-  margin-top: 12px;
+  font-size: 1.125rem;
+  color: #0f172a !important;
+  font-weight: 900;
 }
 
 .navLink {
-  color: #4285F4;
-  font-size: 14px;
+  color: #64748b;
+  font-size: 1.125rem;
   text-decoration: none;
   cursor: pointer;
   background: none;
   border: none;
-  font-weight: normal;
+  font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
+  transition: var(--transition-pure);
 }
 
-.navLink:hover {
-  text-decoration: underline;
+.navLink:hover:not(:disabled) {
+  color: #0f172a;
 }
 
 .navLink:disabled {
-  color: #999;
+  color: #cbd5e1;
   cursor: default;
-  text-decoration: none;
 }
 
 /* Pagination Meta overrides from old design */
@@ -693,7 +775,6 @@
   border-radius: 10px;
 }
 
-/* Animations */
 @keyframes slideUp {
   from {
     transform: translateY(100%);
@@ -707,6 +788,43 @@
 
 /* Mobile Bottom Sheets (Create, Edit, Details) */
 @media (max-width: 768px) {
+  .searchWrapper {
+    flex-direction: row !important;
+    gap: 0 !important;
+    align-items: center !important;
+  }
+
+  .contextContainer {
+    position: absolute !important;
+    right: 8px !important;
+  }
+
+  .contextButton {
+    width: auto !important;
+    padding: 8px !important;
+    border: none !important;
+    background: transparent !important;
+  }
+
+  .contextButton span {
+    display: none;
+  }
+
+  .contextButton svg {
+    color: var(--text-primary);
+  }
+
+  .searchInput {
+    padding-right: 48px !important;
+  }
+
+  .contextMenu {
+    top: calc(100% + 8px);
+    right: 0;
+    left: auto;
+    width: 200px;
+  }
+
   /* General Modals (Create, Details, Confirm) */
   .modalOverlay {
     align-items: flex-end; /* Push to bottom */

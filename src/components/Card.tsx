@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useCallback} from "react";
 import cardService from "../services/cardService";
 import styles from "./Card.module.css";
-import { Pencil, Trash2, Plus, ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { Pencil, Trash2, Plus, ChevronLeft, ChevronRight, Search, Sparkles, Image, Tag, MapPin } from 'lucide-react';
 
 
 type PostType = {
@@ -18,6 +18,7 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(4);
     const [searchQuery, setSearchQuery] = useState("");
+    const [isContextExpanded, setIsContextExpanded] = useState(false);
 
 
     // Form state for new post
@@ -132,6 +133,12 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
         setFormUserId("1");
     };
 
+    const handleContextClick = (action: string) => {
+        setSnackbar({ message: `Navigating to ${action}...`, type: 'success' });
+        setTimeout(() => setSnackbar(null), 3000);
+        setIsContextExpanded(false);
+    };
+
     const limitWords = (text: string, count: number) => {
         const words = text.split(' ');
         if (words.length <= count) return text;
@@ -171,6 +178,34 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className={styles.searchInput}
                     />
+                    <div className={styles.contextContainer}>
+                        <button 
+                            className={styles.contextButton}
+                            onClick={() => setIsContextExpanded(!isContextExpanded)}
+                        >
+                            <Sparkles size={16} />
+                            <span>Add Context</span>
+                        </button>
+                        {isContextExpanded && (
+                            <>
+                                <div className={styles.menuOverlay} onClick={() => setIsContextExpanded(false)} />
+                                <div className={styles.contextMenu}>
+                                    <div className={styles.contextOption} onClick={() => handleContextClick("Media Gallery")}>
+                                        <Image size={16} />
+                                        <span>Media Files</span>
+                                    </div>
+                                    <div className={styles.contextOption} onClick={() => handleContextClick("Tag Manager")}>
+                                        <Tag size={16} />
+                                        <span>Add Tags</span>
+                                    </div>
+                                    <div className={styles.contextOption} onClick={() => handleContextClick("Location Picker")}>
+                                        <MapPin size={16} />
+                                        <span>Set Location</span>
+                                    </div>
+                                </div>
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -259,56 +294,39 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
             </div>
 
             <div className={styles.pagination}>
-                <div className={styles.googlePagination}>
-                    {/* C a r d P */}
-                    <span className={`${styles.googleText} ${styles.g1}`}>C</span>
-                    <span className={`${styles.googleText} ${styles.l}`}>a</span>
-                    <span className={`${styles.googleText} ${styles.e}`}>r</span>
-                    <span className={`${styles.googleText} ${styles.g1}`}>d</span>
-                    <span className={`${styles.googleText} ${styles.e}`}>P</span>
-
-                    <div 
-                        className={styles.pageItem}
-                        onClick={() => page > 1 && setPage(p => p - 1)}
-                    >
-                        <span className={`${styles.googleO} ${page === 1 ? styles['o-active'] : styles['o-inactive']}`}>o</span>
-                    </div>
-
-                    {/* Generate 'o's for pages */}
-                    {Array.from({ length: Math.min(10, Math.ceil(posts.length / limit) || 1) }).map((_, i) => {
-                        const pageNum = i + 1;
-                        const isCurrentPage = page === pageNum;
-                        
-                        return (
-                            <div 
-                                key={pageNum} 
-                                className={styles.pageItem}
-                                onClick={() => setPage(pageNum)}
-                            >
-                                <span className={`${styles.googleO} ${isCurrentPage ? styles['o-active'] : styles['o-inactive']}`}>
-                                    o
-                                </span>
-                                <span className={isCurrentPage ? styles.pageNumberActive : styles.pageNumber}>
-                                    {pageNum}
-                                </span>
-                            </div>
-                        );
-                    })}
-
-                    <span className={`${styles.googleText} ${styles.l}`}>s</span>
-                    <span className={`${styles.googleText} ${styles.g1}`}>t</span>
+                <div className={styles.paginationBranding}>
+                    <span className={styles.cardText}>Card</span>
+                    <span className={styles.postText}>Post</span>
                 </div>
-
-                <div className={styles.navLinks}>
+                <div className={styles.paginationControls}>
                     <button
                         disabled={page === 1}
                         onClick={() => setPage(p => p - 1)}
                         className={styles.navLink}
                         aria-label="Previous Page"
                     >
-                        <ChevronLeft size={16} />
-                        Prev
+                        <ChevronLeft size={18} strokeWidth={2.5} />
+                        <span>Prev</span>
                     </button>
+
+                    <div className={styles.pageNumbers}>
+                        {Array.from({ length: Math.min(10, Math.ceil(posts.length / limit) || 1) }).map((_, i) => {
+                            const pageNum = i + 1;
+                            const isCurrentPage = page === pageNum;
+                            
+                            return (
+                                <button 
+                                    key={pageNum} 
+                                    className={`${styles.pageItem} ${isCurrentPage ? styles.pageItemActive : ""}`}
+                                    onClick={() => setPage(pageNum)}
+                                >
+                                    <span className={isCurrentPage ? styles.pageNumberActive : styles.pageNumber}>
+                                        {pageNum}
+                                    </span>
+                                </button>
+                            );
+                        })}
+                    </div>
                     
                     <button
                         disabled={posts.length < limit}
@@ -316,8 +334,8 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
                         className={styles.navLink}
                         aria-label="Next Page"
                     >
-                        Next
-                        <ChevronRight size={16} />
+                        <span>Next</span>
+                        <ChevronRight size={18} strokeWidth={2.5} />
                     </button>
                 </div>
 
