@@ -207,6 +207,11 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
                         )}
                     </div>
                 </div>
+                {searchQuery && (
+                    <div className={styles.searchAlert}>
+                        * Filtering posts by: "{searchQuery}"
+                    </div>
+                )}
             </div>
 
             {error && <div className={styles.errorMessage}>{error}</div>}

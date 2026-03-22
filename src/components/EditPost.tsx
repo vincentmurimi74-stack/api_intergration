@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import cardService from "../services/cardService";
 import userService from "../services/userService";
 import styles from "./Card.module.css";
-import { ArrowLeft, MessageSquare, Send } from 'lucide-react';
+import { X, MessageSquare, Send } from 'lucide-react';
 
 type Card = {
     id: number;
@@ -88,18 +88,20 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess }) => {
     return (
         <div className={styles.editPageOverlay}>
             <div className={styles.editPageContainer}>
-                <button 
-                    className={styles.editPageCloseBtn}
-                    onClick={onBack}
-                    aria-label="Back to cards"
-                >
-                    <ArrowLeft size={24} />
-                </button>
+                <div className={styles.editPageHeader}>
+                    <h1 className={styles.editPageTitle}>Edit Post</h1>
+                    <button 
+                        className={styles.editPageCloseIconBtn}
+                        onClick={onBack}
+                        aria-label="Close"
+                    >
+                        <X size={20} />
+                    </button>
+                </div>
                 <div className={styles.editPageContent}>
                     <div className={styles.editPageForm}>
-                        <h2>Edit Post</h2>
                         <div className={styles.formGroup}>
-                            <label htmlFor="editUserId" className={styles.formLabel}>User</label>
+                            <label htmlFor="editUserId" className={styles.formLabelCentered}>User</label>
                             <select
                                 id="editUserId"
                                 value={formUserId}
@@ -116,7 +118,7 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess }) => {
                             )}
                         </div>
                         <div className={styles.formGroup}>
-                            <label htmlFor="editTitle" className={styles.formLabel}>Title</label>
+                            <label htmlFor="editTitle" className={styles.formLabelCentered}>Title</label>
                             <input
                                 id="editTitle"
                                 value={formTitle}
@@ -125,11 +127,11 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess }) => {
                                 className={`${styles.formInput} ${!formTitle.trim() ? styles.errorInput : ""}`}
                             />
                             {!formTitle.trim() && (
-                                <span className={styles.validationWarning}>Title is required</span>
+                                <span className={styles.validationWarningBelow}>Title is required</span>
                             )}
                         </div>
                         <div className={styles.formGroup}>
-                            <label htmlFor="editBody" className={styles.formLabel}>Body</label>
+                            <label htmlFor="editBody" className={styles.formLabelCentered}>Body</label>
                             <textarea
                                 id="editBody"
                                 value={formBody}
@@ -138,16 +140,22 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess }) => {
                                 className={`${styles.formTextarea} ${!formBody.trim() ? styles.errorTextarea : ""}`}
                             />
                             {!formBody.trim() && (
-                                <span className={styles.validationWarning}>Body content is required</span>
+                                <span className={styles.validationWarningBelow}>Body content is required</span>
                             )}
                         </div>
-                        <div className={styles.editPageButtonGroup}>
+                        <div className={styles.editPageFooter}>
                                 <button
                                     onClick={() => handleUpdate("PUT")}
-                                    className={styles.btnPrimary}
+                                    className={styles.btnGrayPill}
                                     disabled={loading || !formTitle.trim() || !formBody.trim() || !formUserId.trim()}
                                 >
-                                    {loading ? "Updating..." : "Update Post"}
+                                    {loading ? "Updating..." : "Update (POST)"}
+                                </button>
+                                <button 
+                                    className={styles.btnCancelText}
+                                    onClick={onBack}
+                                >
+                                    Cancel
                                 </button>
                         </div>
                     </div>
