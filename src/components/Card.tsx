@@ -33,6 +33,13 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
 
     // Delete confirmation state
     const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; postId: number | null } | null>(null);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 480);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 480);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const loadPosts = useCallback(async () => {
         try {
@@ -315,22 +322,38 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
                     </button>
 
                     <div className={styles.pageNumbers}>
-                        {Array.from({ length: Math.min(10, Math.ceil(posts.length / limit) || 1) }).map((_, i) => {
-                            const pageNum = i + 1;
-                            const isCurrentPage = page === pageNum;
+                        {(() => {
+                            const totalPages = Math.ceil(posts.length / limit) || 1;
+                            const maxVisible = isMobile ? 3 : 10;
+                            const range = Math.floor(maxVisible / 2);
                             
-                            return (
-                                <button 
-                                    key={pageNum} 
-                                    className={`${styles.pageItem} ${isCurrentPage ? styles.pageItemActive : ""}`}
-                                    onClick={() => setPage(pageNum)}
-                                >
-                                    <span className={isCurrentPage ? styles.pageNumberActive : styles.pageNumber}>
-                                        {pageNum}
-                                    </span>
-                                </button>
-                            );
-                        })}
+                            let start = Math.max(1, page - range);
+                            let end = Math.min(totalPages, start + maxVisible - 1);
+                            
+                            if (end - start + 1 < maxVisible) {
+                                start = Math.max(1, end - maxVisible + 1);
+                            }
+
+                            const pages = [];
+                            for (let i = start; i <= end; i++) {
+                                pages.push(i);
+                            }
+                            
+                            return pages.map(pageNum => {
+                                const isCurrentPage = page === pageNum;
+                                return (
+                                    <button 
+                                        key={pageNum} 
+                                        className={`${styles.pageItem} ${isCurrentPage ? styles.pageItemActive : ""}`}
+                                        onClick={() => setPage(pageNum)}
+                                    >
+                                        <span className={isCurrentPage ? styles.pageNumberActive : styles.pageNumber}>
+                                            {pageNum}
+                                        </span>
+                                    </button>
+                                );
+                            });
+                        })()}
                     </div>
                     
                     <button

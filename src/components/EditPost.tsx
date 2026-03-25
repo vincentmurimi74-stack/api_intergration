@@ -220,7 +220,11 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess }) => {
                         
                         <div className={styles.commentList}>
                             {comments.map(c => (
-                                <div key={c.id} className={styles.commentItem}>
+                                <div 
+                                    key={c.id} 
+                                    className={styles.commentItem}
+                                    onClick={() => setSnackbar({ message: `Viewing details for comment by ${c.name}`, type: 'success' })}
+                                >
                                     <div className={styles.commentAvatar}>
                                         {c.name.charAt(0).toUpperCase()}
                                     </div>
