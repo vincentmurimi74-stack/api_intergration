@@ -15,9 +15,12 @@ type EditPostProps = {
     post: Card;
     onBack: () => void;
     onSuccess: () => void;
+    isAuthenticated: boolean;
+    onLoginRequired: () => void;
+    onLogout: () => void;
 }
 
-const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess }) => {
+const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess, isAuthenticated, onLoginRequired, onLogout }) => {
     const [formTitle, setFormTitle] = useState(post.title);
     const [formBody, setFormBody] = useState(post.body);
     const [formUserId, setFormUserId] = useState(post.userId.toString());
@@ -90,13 +93,33 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess }) => {
             <div className={styles.editPageContainer}>
                 <div className={styles.editPageHeader}>
                     <h1 className={styles.editPageTitle}>Edit Post</h1>
-                    <button 
-                        className={styles.editPageCloseIconBtn}
-                        onClick={onBack}
-                        aria-label="Close"
-                    >
-                        <X size={20} />
-                    </button>
+                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                        {!isAuthenticated ? (
+                            <button 
+                                onClick={onLoginRequired}
+                                className={styles.newPostBtn}
+                                style={{ padding: '8px 16px' }}
+                            >
+                                Login
+                            </button>
+                        ) : (
+                            <button 
+                                onClick={onLogout}
+                                className={styles.newPostBtn}
+                                style={{ padding: '8px 16px', background: '#f1f5f9', color: '#64748b' }}
+                            >
+                                <X size={16} />
+                                Logout
+                            </button>
+                        )}
+                        <button 
+                            className={styles.editPageCloseIconBtn}
+                            onClick={onBack}
+                            aria-label="Close"
+                        >
+                            <X size={20} />
+                        </button>
+                    </div>
                 </div>
                 <div className={styles.editPageContent}>
                     <div className={styles.editPageForm}>

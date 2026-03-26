@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useCallback} from "react";
 import cardService from "../services/cardService";
 import styles from "./Card.module.css";
-import { Pencil, Trash2, Plus, ChevronLeft, ChevronRight, Search, Sparkles, Image, Tag, MapPin } from 'lucide-react';
+import { Pencil, Trash2, Plus, ChevronLeft, ChevronRight, Search, Sparkles, Image, Tag, MapPin, User, Moon, Sun, LogOut, Settings, LayoutGrid, List } from 'lucide-react';
 
 
 type PostType = {
@@ -11,13 +11,23 @@ type PostType = {
     userId: number;
 }
 
-const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: number }> = ({ onEditPost, refreshTrigger }) => {
+const Card: React.FC<{ 
+    onEditPost: (post: PostType) => void; 
+    refreshTrigger: number; 
+    onLogout: () => void;
+    isAuthenticated: boolean;
+    onLoginRequired: (action?: { type: 'edit' | 'add' | 'view', post?: PostType }) => void;
+    authError: string | null;
+    pendingAction: { type: 'edit' | 'add' | 'view', post?: PostType } | null;
+    onActionResolved: () => void;
+}> = ({ onEditPost, refreshTrigger, onLogout, isAuthenticated, onLoginRequired, authError, pendingAction, onActionResolved }) => {
     const [posts, setPosts] = useState<PostType[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(4);
     const [searchQuery, setSearchQuery] = useState("");
+    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
     const [isContextExpanded, setIsContextExpanded] = useState(false);
 
 
@@ -33,13 +43,58 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
 
     // Delete confirmation state
     const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; postId: number | null } | null>(null);
-    const [isMobile, setIsMobile] = useState(window.innerWidth < 480);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+        return (localStorage.getItem('theme') as 'light' | 'dark') || 'light';
+    });
 
     useEffect(() => {
-        const handleResize = () => setIsMobile(window.innerWidth < 480);
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+    }, [theme]);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 480);
         window.addEventListener('resize', handleResize);
+        
+        // Initialize search from URL
+        const params = new URLSearchParams(window.location.search);
+        const urlSearch = params.get('q');
+        if (urlSearch) {
+            setSearchQuery(urlSearch);
+        }
+
         return () => window.removeEventListener('resize', handleResize);
     }, []);
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        if (searchQuery) {
+            params.set('q', searchQuery);
+        } else {
+            params.delete('q');
+        }
+        const newRelativePathQuery = window.location.pathname + '?' + params.toString();
+        window.history.replaceState(null, '', newRelativePathQuery);
+    }, [searchQuery]);
+
+    useEffect(() => {
+        if (isAuthenticated && pendingAction) {
+            if (pendingAction.type === 'add') {
+                setIsCreating(true);
+            } else if (pendingAction.type === 'edit' && pendingAction.post) {
+                onEditPost(pendingAction.post);
+            } else if (pendingAction.type === 'view' && pendingAction.post) {
+                setViewingPost(pendingAction.post);
+            }
+            onActionResolved();
+        }
+    }, [isAuthenticated, pendingAction, onEditPost, onActionResolved]);
+
+    const toggleTheme = () => {
+        setTheme(prev => prev === 'light' ? 'dark' : 'light');
+    };
 
     const loadPosts = useCallback(async () => {
         try {
@@ -76,6 +131,10 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
     };
 
     const handleCreate = async () => {
+        if (!isAuthenticated) {
+            onLoginRequired({ type: 'add' });
+            return;
+        }
         try {
             setLoading(true);
             const newPost = {
@@ -134,6 +193,10 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
     };
 
     const startCreating = () => {
+        if (!isAuthenticated) {
+            onLoginRequired({ type: 'add' });
+            return;
+        }
         setIsCreating(true);
         setFormTitle("");
         setFormBody("");
@@ -166,13 +229,57 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
                     <span className={styles.cardWord}>Card</span>
                     <span className={styles.postWord}>Post</span>
                 </h2>
-                <button
-                    onClick={startCreating}
-                    className={styles.newPostBtn}
-                >
-                    <Plus size={18} className={styles.btnIconLeft} />
-                    <span className={styles.btnText}>Post</span>
-                </button>
+                <div className={styles.headerActions}>
+                    <div className={styles.profileContainer}>
+                        {!isAuthenticated ? (
+                            <button 
+                                onClick={() => onLoginRequired()}
+                                className={styles.newPostBtn}
+                            >
+                                <User size={18} className={styles.btnIconLeft} />
+                                <span className={styles.btnText}>Login</span>
+                            </button>
+                        ) : (
+                            <>
+                                <button 
+                                    className={styles.profileTrigger}
+                                    onClick={() => setIsProfileOpen(!isProfileOpen)}
+                                >
+                                    <div className={styles.avatarMini}>VM</div>
+                                </button>
+                                
+                                {isProfileOpen && (
+                                    <>
+                                        <div className={styles.dropdownOverlay} onClick={() => setIsProfileOpen(false)} />
+                                        <div className={styles.profileDropdown}>
+                                            <div className={styles.dropdownHeader}>
+                                                <div className={styles.avatarLarge}>VM</div>
+                                                <div className={styles.userInfo}>
+                                                    <div className={styles.userName}>Vincent Murimi</div>
+                                                    <div className={styles.userEmail}>vincent@example.com</div>
+                                                </div>
+                                            </div>
+                                            <div className={styles.dropdownDivider} />
+                                            <div className={styles.dropdownItem} onClick={() => { toggleTheme(); setIsProfileOpen(false); }}>
+                                                {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+                                                <span>{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
+                                            </div>
+                                            <div className={styles.dropdownItem} onClick={() => setIsProfileOpen(false)}>
+                                                <Settings size={18} />
+                                                <span>Settings</span>
+                                            </div>
+                                            <div className={styles.dropdownDivider} />
+                                            <div className={`${styles.dropdownItem} ${styles.logoutItem}`} onClick={() => { setIsProfileOpen(false); onLogout(); }}>
+                                                <LogOut size={18} />
+                                                <span>Logout</span>
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+                            </>
+                        )}
+                    </div>
+                </div>
             </div>
 
             <div className={styles.searchContainer}>
@@ -185,41 +292,38 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className={styles.searchInput}
                     />
-                    <div className={styles.contextContainer}>
-                        <button 
-                            className={styles.contextButton}
-                            onClick={() => setIsContextExpanded(!isContextExpanded)}
-                        >
-                            <Sparkles size={16} />
-                            <span>Add Context</span>
-                        </button>
-                        {isContextExpanded && (
-                            <>
-                                <div className={styles.menuOverlay} onClick={() => setIsContextExpanded(false)} />
-                                <div className={styles.contextMenu}>
-                                    <div className={styles.contextOption} onClick={() => handleContextClick("Media Gallery")}>
-                                        <Image size={16} />
-                                        <span>Media Files</span>
-                                    </div>
-                                    <div className={styles.contextOption} onClick={() => handleContextClick("Tag Manager")}>
-                                        <Tag size={16} />
-                                        <span>Add Tags</span>
-                                    </div>
-                                    <div className={styles.contextOption} onClick={() => handleContextClick("Location Picker")}>
-                                        <MapPin size={16} />
-                                        <span>Set Location</span>
-                                    </div>
-                                </div>
-                            </>
-                        )}
-                    </div>
                 </div>
-                {searchQuery && (
-                    <div className={styles.searchAlert}>
-                        * Filtering posts by: "{searchQuery}"
-                    </div>
-                )}
+
+                <div className={styles.viewToggle}>
+                    <button 
+                        onClick={() => setViewMode('grid')} 
+                        className={`${styles.viewBtn} ${viewMode === 'grid' ? styles.activeView : ''}`}
+                        title="Grid View"
+                    >
+                        <LayoutGrid size={18} />
+                    </button>
+                    <button 
+                        onClick={() => setViewMode('list')} 
+                        className={`${styles.viewBtn} ${viewMode === 'list' ? styles.activeView : ''}`}
+                        title="List View"
+                    >
+                        <List size={18} />
+                    </button>
+                </div>
+
+                <button
+                    onClick={startCreating}
+                    className={styles.newPostBtn}
+                >
+                    <Plus size={18} className={styles.btnIconLeft} />
+                    <span className={styles.btnText}>Post</span>
+                </button>
             </div>
+            {authError && (
+                <div className={styles.searchAlert} style={{ color: '#ef4444', marginBottom: '24px' }}>
+                    {authError}
+                </div>
+            )}
 
             {error && <div className={styles.errorMessage}>{error}</div>}
 
@@ -278,16 +382,29 @@ const Card: React.FC<{ onEditPost: (post: PostType) => void; refreshTrigger: num
                 </div>
             )}
 
-            <div className={styles.postsGrid}>
+            <div className={`${styles.postsGrid} ${viewMode === 'list' ? styles.listView : ''}`}>
                 {filteredPosts.map(post => (
-                    <div key={post.id} className={styles.postCard} onClick={() => setViewingPost(post)}>
+                    <div key={post.id} className={styles.postCard} onClick={() => {
+                        if (!isAuthenticated) {
+                            onLoginRequired({ type: 'view', post });
+                        } else {
+                            setViewingPost(post);
+                        }
+                    }}>
                         <div className={styles.postContent}>
                             <h4 className={styles.postTitle}>{limitWords(post.title, 2)}</h4>
                             <p className={styles.postBody}>{post.body}</p>
                         </div>
                         <div className={styles.postActions}>
                             <button
-                                onClick={(e) => { e.stopPropagation(); onEditPost(post); }}
+                                onClick={(e) => { 
+                                    e.stopPropagation(); 
+                                    if (!isAuthenticated) {
+                                        onLoginRequired({ type: 'edit', post });
+                                    } else {
+                                        onEditPost(post);
+                                    }
+                                }}
                                 className={styles.btnIcon}
                                 aria-label="Edit post"
                             >

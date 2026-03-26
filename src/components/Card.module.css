@@ -14,6 +14,14 @@
   width: 100%;
 }
 
+.headerActions {
+  grid-column: 3;
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
 .mainTitle {
   grid-column: 2;
   margin: 0;
@@ -35,8 +43,7 @@
 }
 
 .newPostBtn {
-  grid-column: 3;
-  justify-self: end;
+  margin: 0;
 }
 
 /* Base Button Styles - Pill Shapes */
@@ -209,7 +216,7 @@
   border-radius: 24px;
   width: 100%;
   max-width: 540px;
-  padding: 40px;
+  padding: 24px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
@@ -253,12 +260,17 @@
 .searchContainer {
   margin-bottom: 48px;
   max-width: 100%;
+  display: flex;
+  gap: 12px;
+  align-items: center;
 }
 
 .searchWrapper {
   position: relative;
   display: flex;
   align-items: center;
+  flex: 1;
+  max-width: 420px;
 }
 
 .searchIcon {
@@ -270,11 +282,11 @@
 
 .searchInput {
   width: 100%;
-  padding: 16px 160px 16px 52px;
+  padding: 12px 20px 12px 52px;
   border-radius: var(--radius-pill);
   border: 1px solid var(--border-color);
   background: var(--surface);
-  font-size: 1rem;
+  font-size: 0.9375rem;
   transition: var(--transition-pure);
   color: var(--text-primary);
   box-shadow: var(--shadow-sm);
@@ -296,6 +308,40 @@
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+.viewToggle {
+  display: flex;
+  gap: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-pill);
+  padding: 4px;
+  margin-right: 8px;
+}
+
+.viewBtn {
+  background: none;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition-pure);
+}
+
+.viewBtn:hover {
+  background: var(--bg-color);
+  color: var(--text-primary);
+}
+
+.activeView {
+  background: #0f172a !important;
+  color: white !important;
 }
 
 /* Search Context Styles */
@@ -665,7 +711,7 @@
   width: 100%;
   max-width: 540px;
   margin: 20px auto;
-  padding: 32px;
+  padding: 24px;
   border-radius: 20px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
   animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -743,7 +789,7 @@
   background: var(--surface);
   border: 1px solid var(--border-color);
   border-radius: 24px;
-  padding: 48px;
+  padding: 32px;
   box-shadow: var(--shadow-md);
 }
 
@@ -1050,5 +1096,221 @@
 
   .navLink span {
     font-size: 0.875rem;
+  }
+}
+
+/* Profile Dropdown Styles */
+.profileContainer {
+  position: relative;
+}
+
+.profileTrigger {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  transition: var(--transition-pure);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.profileTrigger:hover {
+  border-color: var(--text-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.avatarMini {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+
+.dropdownOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+.profileDropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 280px;
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 8px;
+  z-index: 1001;
+  animation: dropdownEntry 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: top right;
+}
+
+@keyframes dropdownEntry {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.dropdownHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+}
+
+.avatarLarge {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 1.25rem;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.userName {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.userEmail {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.dropdownDivider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 8px 0;
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-pure);
+}
+
+.dropdownItem:hover {
+  background: var(--bg-color);
+  color: var(--accent);
+}
+
+.dropdownItem svg {
+  color: var(--text-secondary);
+  transition: var(--transition-pure);
+}
+
+.dropdownItem:hover svg {
+  color: var(--accent);
+  transform: rotate(15deg);
+}
+
+.logoutItem {
+  color: #ef4444;
+}
+
+.logoutItem:hover {
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+.logoutItem svg {
+  color: #ef4444;
+}
+
+[data-theme='dark'] .logoutItem:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+/* List View Styles */
+.listView {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  grid-template-columns: none !important;
+}
+
+.listView .postCard {
+  flex-direction: row !important;
+  align-items: center !important;
+  padding: 12px 20px !important;
+  min-height: auto !important;
+  width: 100% !important;
+}
+
+.listView .postContent {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 20px !important;
+  margin-bottom: 0 !important;
+}
+
+.listView .postTitle {
+  min-width: 150px !important;
+  margin-bottom: 0 !important;
+  font-size: 0.95rem !important;
+}
+
+.listView .postBody {
+  margin-bottom: 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  font-size: 0.875rem !important;
+  max-width: 500px !important;
+}
+
+.listView .postActions {
+  justify-content: flex-end !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  border-top: none !important;
+  width: auto !important;
+}
+
+@media (max-width: 768px) {
+  .listView .postContent {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 4px !important;
+  }
+  .listView .postBody {
+    max-width: 200px !important;
   }
 }
