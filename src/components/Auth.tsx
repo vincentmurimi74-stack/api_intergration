@@ -76,7 +76,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin, onError }) => {
                         <>
                             <div className={styles.formGroup}>
                                 <label>Full Name</label>
-                                <div className={styles.inputWrapper}>
+                                <div className={styles.inputWrapper} title="Full Name">
                                     <User className={styles.inputIcon} size={16} />
                                     <input 
                                         name="fullName"
@@ -93,7 +93,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin, onError }) => {
                             
                             <div className={styles.formGroup}>
                                 <label>Email Address</label>
-                                <div className={styles.inputWrapper}>
+                                <div className={styles.inputWrapper} title="Email Address">
                                     <Mail className={styles.inputIcon} size={16} />
                                     <input 
                                         name="email"
@@ -110,7 +110,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin, onError }) => {
 
                             <div className={styles.formGroup}>
                                 <label>Phone Number</label>
-                                <div className={styles.inputWrapper}>
+                                <div className={styles.inputWrapper} title="Phone Number">
                                     <Phone className={styles.inputIcon} size={16} />
                                     <input 
                                         name="phone"
@@ -127,7 +127,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin, onError }) => {
 
                             <div className={styles.formGroup}>
                                 <label>Address</label>
-                                <div className={styles.inputWrapper}>
+                                <div className={styles.inputWrapper} title="Address">
                                     <MapPin className={styles.inputIcon} size={16} />
                                     <input 
                                         name="address"
@@ -144,7 +144,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin, onError }) => {
 
                             <div className={styles.formGroup}>
                                 <label>Company (Optional)</label>
-                                <div className={styles.inputWrapper}>
+                                <div className={styles.inputWrapper} title="Company">
                                     <Building className={styles.inputIcon} size={16} />
                                     <input 
                                         name="company"
@@ -161,7 +161,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin, onError }) => {
                     {isLogin && (
                         <div className={styles.formGroup}>
                             <label>Email Address</label>
-                            <div className={styles.inputWrapper}>
+                            <div className={styles.inputWrapper} title="Email Address">
                                 <Mail className={styles.inputIcon} size={16} />
                                 <input 
                                     name="email"
@@ -178,7 +178,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin, onError }) => {
 
                     <div className={styles.formGroup}>
                         <label>Password</label>
-                        <div className={styles.inputWrapper}>
+                        <div className={styles.inputWrapper} title="Password">
                             <Lock className={styles.inputIcon} size={16} />
                             <input 
                                 name="password"

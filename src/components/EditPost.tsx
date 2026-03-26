@@ -107,6 +107,7 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess, isAuthenti
                                 onClick={onLogout}
                                 className={styles.newPostBtn}
                                 style={{ padding: '8px 16px', background: '#f1f5f9', color: '#64748b' }}
+                                title="Log Out"
                             >
                                 <X size={16} />
                                 Logout
@@ -116,6 +117,7 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess, isAuthenti
                             className={styles.editPageCloseIconBtn}
                             onClick={onBack}
                             aria-label="Close"
+                            title="Close / Back to Home"
                         >
                             <X size={20} />
                         </button>
@@ -185,7 +187,7 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess, isAuthenti
 
                     {/* comments section */}
                     <div className={styles.commentSection}>
-                        <h3 className={styles.commentHeaderTitle}>
+                        <h3 className={styles.commentHeaderTitle} title="Comments">
                             <MessageSquare size={20} />
                             Comments ({comments.length})
                         </h3>

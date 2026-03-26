@@ -244,6 +244,7 @@ const Card: React.FC<{
                                 <button 
                                     className={styles.profileTrigger}
                                     onClick={() => setIsProfileOpen(!isProfileOpen)}
+                                    title="Profile Settings"
                                 >
                                     <div className={styles.avatarMini}>VM</div>
                                 </button>
@@ -283,7 +284,7 @@ const Card: React.FC<{
             </div>
 
             <div className={styles.searchContainer}>
-                <div className={styles.searchWrapper}>
+                <div className={styles.searchWrapper} title="Search">
                     <Search size={18} className={styles.searchIcon} />
                     <input
                         type="text"
@@ -314,6 +315,7 @@ const Card: React.FC<{
                 <button
                     onClick={startCreating}
                     className={styles.newPostBtn}
+                    title="Create New Post"
                 >
                     <Plus size={18} className={styles.btnIconLeft} />
                     <span className={styles.btnText}>Post</span>
@@ -407,6 +409,7 @@ const Card: React.FC<{
                                 }}
                                 className={styles.btnIcon}
                                 aria-label="Edit post"
+                                title="Edit Post"
                             >
                                 <Pencil size={18} />
                             </button>
@@ -414,6 +417,7 @@ const Card: React.FC<{
                                 onClick={(e) => { e.stopPropagation(); handleDeleteClick(post.id); }}
                                 className={styles.btnIconDelete}
                                 aria-label="Delete post"
+                                title="Delete Post"
                             >
                                 <Trash2 size={18} />
                             </button>
@@ -433,6 +437,7 @@ const Card: React.FC<{
                         onClick={() => setPage(p => p - 1)}
                         className={styles.navLink}
                         aria-label="Previous Page"
+                        title="Previous Page"
                     >
                         <ChevronLeft size={18} strokeWidth={2.5} />
                         <span>Prev</span>
@@ -463,6 +468,7 @@ const Card: React.FC<{
                                         key={pageNum} 
                                         className={`${styles.pageItem} ${isCurrentPage ? styles.pageItemActive : ""}`}
                                         onClick={() => setPage(pageNum)}
+                                        title={`Go to page ${pageNum}`}
                                     >
                                         <span className={isCurrentPage ? styles.pageNumberActive : styles.pageNumber}>
                                             {pageNum}
