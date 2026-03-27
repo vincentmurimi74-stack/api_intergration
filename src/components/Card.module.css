@@ -344,6 +344,12 @@
   color: white !important;
 }
 
+.floatingActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 /* Search Context Styles */
 .contextContainer {
   position: absolute;
@@ -1096,6 +1102,33 @@
 
   .navLink span {
     font-size: 0.875rem;
+  }
+
+  .floatingActions {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(8px);
+    padding: 8px;
+    border-radius: var(--radius-pill);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  .viewToggle {
+    margin-right: 0 !important;
+    background: white !important;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .newPostBtn {
+    margin: 0 !important;
+    box-shadow: var(--shadow-md) !important;
   }
 }
 

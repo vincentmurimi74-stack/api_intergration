@@ -295,31 +295,33 @@ const Card: React.FC<{
                     />
                 </div>
 
-                <div className={styles.viewToggle}>
-                    <button 
-                        onClick={() => setViewMode('grid')} 
-                        className={`${styles.viewBtn} ${viewMode === 'grid' ? styles.activeView : ''}`}
-                        title="Grid View"
+                <div className={styles.floatingActions}>
+                    <div className={styles.viewToggle}>
+                        <button 
+                            onClick={() => setViewMode('grid')} 
+                            className={`${styles.viewBtn} ${viewMode === 'grid' ? styles.activeView : ''}`}
+                            title="Grid View"
+                        >
+                            <LayoutGrid size={18} />
+                        </button>
+                        <button 
+                            onClick={() => setViewMode('list')} 
+                            className={`${styles.viewBtn} ${viewMode === 'list' ? styles.activeView : ''}`}
+                            title="List View"
+                        >
+                            <List size={18} />
+                        </button>
+                    </div>
+
+                    <button
+                        onClick={startCreating}
+                        className={styles.newPostBtn}
+                        title="Create New Post"
                     >
-                        <LayoutGrid size={18} />
-                    </button>
-                    <button 
-                        onClick={() => setViewMode('list')} 
-                        className={`${styles.viewBtn} ${viewMode === 'list' ? styles.activeView : ''}`}
-                        title="List View"
-                    >
-                        <List size={18} />
+                        <Plus size={18} className={styles.btnIconLeft} />
+                        <span className={styles.btnText}>Post</span>
                     </button>
                 </div>
-
-                <button
-                    onClick={startCreating}
-                    className={styles.newPostBtn}
-                    title="Create New Post"
-                >
-                    <Plus size={18} className={styles.btnIconLeft} />
-                    <span className={styles.btnText}>Post</span>
-                </button>
             </div>
             {authError && (
                 <div className={styles.searchAlert} style={{ color: '#ef4444', marginBottom: '24px' }}>
