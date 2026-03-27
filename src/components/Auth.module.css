@@ -17,6 +17,30 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+}
+
+.backButton {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  margin-left: -12px;
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: var(--radius-pill);
+  transition: var(--transition-pure);
+}
+
+.backButton:hover {
+  background: var(--bg-color);
+  color: var(--text-primary);
 }
 
 .logoContainer {

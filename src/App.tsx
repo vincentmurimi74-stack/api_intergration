@@ -97,6 +97,7 @@ function App() {
                 <Auth 
                     onLogin={handleLogin} 
                     onError={handleAuthError}
+                    onBack={handleBackToCards}
                 />
             )}
         </div>

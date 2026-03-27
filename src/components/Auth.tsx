@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { User, Mail, Phone, MapPin, Building, Lock, ArrowRight } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Building, Lock, ArrowRight, ChevronLeft } from 'lucide-react';
 import styles from './Auth.module.css';
 
 type AuthProps = {
     onLogin: () => void;
     onError: (error: string) => void;
+    onBack: () => void;
 };
 
-const Auth: React.FC<AuthProps> = ({ onLogin, onError }) => {
+const Auth: React.FC<AuthProps> = ({ onLogin, onError, onBack }) => {
     const [isLogin, setIsLogin] = useState(false);
     const [formData, setFormData] = useState({
         fullName: '',
@@ -64,6 +65,14 @@ const Auth: React.FC<AuthProps> = ({ onLogin, onError }) => {
     return (
         <div className={styles.authWrapper}>
             <div className={styles.authContainer}>
+                <button 
+                    onClick={onBack}
+                    className={styles.backButton}
+                    title="Back to Home"
+                >
+                    <ChevronLeft size={18} />
+                    <span>Back</span>
+                </button>
                 <h1 className={styles.title}>
                     {isLogin ? 'Welcome back' : 'Create an account'}
                 </h1>
