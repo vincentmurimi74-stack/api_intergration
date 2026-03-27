@@ -29,6 +29,7 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess, isAuthenti
     const [users, setUsers] = useState<{id:number;name:string}[]>([]);
     const [comments, setComments] = useState<{id:number;name:string;email:string;body:string}[]>([]);
     const [newComment, setNewComment] = useState({name: '', email: '', body: ''});
+    const [submitAttempted, setSubmitAttempted] = useState(false);
 
     useEffect(() => {
         // fetch users
@@ -42,6 +43,9 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess, isAuthenti
     }, [post.id]);
 
     const handleUpdate = async (method: "PUT" | "PATCH") => {
+        setSubmitAttempted(true);
+        if (!formTitle.trim() || !formBody.trim() || !formUserId.trim()) return;
+
         // detect no changes
         const currentUserId = parseInt(formUserId) || post.userId;
         if (
@@ -94,25 +98,7 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess, isAuthenti
                 <div className={styles.editPageHeader}>
                     <h1 className={styles.editPageTitle}>Edit Post</h1>
                     <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                        {!isAuthenticated ? (
-                            <button 
-                                onClick={onLoginRequired}
-                                className={styles.newPostBtn}
-                                style={{ padding: '8px 16px' }}
-                            >
-                                Login
-                            </button>
-                        ) : (
-                            <button 
-                                onClick={onLogout}
-                                className={styles.newPostBtn}
-                                style={{ padding: '8px 16px', background: '#f1f5f9', color: '#64748b' }}
-                                title="Log Out"
-                            >
-                                <X size={16} />
-                                Logout
-                            </button>
-                        )}
+
                         <button 
                             className={styles.editPageCloseIconBtn}
                             onClick={onBack}
@@ -131,14 +117,14 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess, isAuthenti
                                 id="editUserId"
                                 value={formUserId}
                                 onChange={(e) => setFormUserId(e.target.value)}
-                                className={`${styles.formInput} ${!formUserId.trim() ? styles.errorInput : ""}`}
+                                className={`${styles.formInput} ${submitAttempted && !formUserId.trim() ? styles.errorInput : ""}`}
                             >
                                 <option value="">Select user</option>
                                 {users.map(u => (
                                     <option key={u.id} value={u.id}>{u.name}</option>
                                 ))}
                             </select>
-                            {!formUserId.trim() && (
+                            {submitAttempted && !formUserId.trim() && (
                                 <span className={styles.validationWarning}>Please select a user</span>
                             )}
                         </div>
@@ -149,9 +135,9 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess, isAuthenti
                                 value={formTitle}
                                 onChange={(e) => setFormTitle(e.target.value)}
                                 placeholder="Enter post title"
-                                className={`${styles.formInput} ${!formTitle.trim() ? styles.errorInput : ""}`}
+                                className={`${styles.formInput} ${submitAttempted && !formTitle.trim() ? styles.errorInput : ""}`}
                             />
-                            {!formTitle.trim() && (
+                            {submitAttempted && !formTitle.trim() && (
                                 <span className={styles.validationWarningBelow}>Title is required</span>
                             )}
                         </div>
@@ -162,9 +148,9 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess, isAuthenti
                                 value={formBody}
                                 onChange={(e) => setFormBody(e.target.value)}
                                 placeholder="Enter post content"
-                                className={`${styles.formTextarea} ${!formBody.trim() ? styles.errorTextarea : ""}`}
+                                className={`${styles.formTextarea} ${submitAttempted && !formBody.trim() ? styles.errorTextarea : ""}`}
                             />
-                            {!formBody.trim() && (
+                            {submitAttempted && !formBody.trim() && (
                                 <span className={styles.validationWarningBelow}>Body content is required</span>
                             )}
                         </div>
@@ -172,9 +158,9 @@ const EditPost: React.FC<EditPostProps> = ({ post, onBack, onSuccess, isAuthenti
                                 <button
                                     onClick={() => handleUpdate("PUT")}
                                     className={styles.btnGrayPill}
-                                    disabled={loading || !formTitle.trim() || !formBody.trim() || !formUserId.trim()}
+                                    disabled={loading}
                                 >
-                                    {loading ? "Updating..." : "Update (POST)"}
+                                    {loading ? "Updating..." : "Update"}
                                 </button>
                                 <button 
                                     className={styles.btnCancelText}

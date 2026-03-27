@@ -40,6 +40,7 @@ const Card: React.FC<{
 
     // Snackbar state
     const [snackbar, setSnackbar] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+    const [submitAttempted, setSubmitAttempted] = useState(false);
 
     // Delete confirmation state
     const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; postId: number | null } | null>(null);
@@ -135,6 +136,9 @@ const Card: React.FC<{
             onLoginRequired({ type: 'add' });
             return;
         }
+        setSubmitAttempted(true);
+        if (!formTitle.trim() || !formBody.trim()) return;
+
         try {
             setLoading(true);
             const newPost = {
@@ -150,6 +154,7 @@ const Card: React.FC<{
                 setFormBody("");
                 setFormUserId("1");
                 setIsCreating(false);
+                setSubmitAttempted(false);
                 // Refresh or just let the user know it was sent
                 await loadPosts();
             }
@@ -201,6 +206,7 @@ const Card: React.FC<{
         setFormTitle("");
         setFormBody("");
         setFormUserId("1");
+        setSubmitAttempted(false);
     };
 
     const handleContextClick = (action: string) => {
@@ -316,10 +322,10 @@ const Card: React.FC<{
                     <button
                         onClick={startCreating}
                         className={styles.newPostBtn}
-                        title="Create New Post"
+                        title="Create"
                     >
                         <Plus size={18} className={styles.btnIconLeft} />
-                        <span className={styles.btnText}>Post</span>
+                        <span className={styles.btnText}>Create</span>
                     </button>
                 </div>
             </div>
@@ -332,13 +338,13 @@ const Card: React.FC<{
             {error && <div className={styles.errorMessage}>{error}</div>}
 
             {isCreating && (
-                <div className={styles.modalOverlay} onClick={() => { setIsCreating(false); setFormTitle(""); setFormBody(""); setFormUserId("1"); }}>
+                <div className={styles.modalOverlay} onClick={() => { setIsCreating(false); setFormTitle(""); setFormBody(""); setFormUserId("1"); setSubmitAttempted(false); }}>
                     <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
                         <div className={styles.modalHeader}>
-                            <h3>Create New Post</h3>
+                            <h3>Create</h3>
                             <button 
                                 className={styles.closeBtn}
-                                onClick={() => { setIsCreating(false); setFormTitle(""); setFormBody(""); setFormUserId("1"); }}
+                                onClick={() => { setIsCreating(false); setFormTitle(""); setFormBody(""); setFormUserId("1"); setSubmitAttempted(false); }}
                             >
                                 ✕
                             </button>
@@ -352,9 +358,9 @@ const Card: React.FC<{
                                     value={formTitle}
                                     onChange={(e) => setFormTitle(e.target.value)}
                                     placeholder="Enter post title"
-                                    className={`${styles.formInput} ${!formTitle.trim() ? styles.errorInput : ""}`}
+                                    className={`${styles.formInput} ${submitAttempted && !formTitle.trim() ? styles.errorInput : ""}`}
                                 />
-                                {!formTitle.trim() && (
+                                {submitAttempted && !formTitle.trim() && (
                                     <span className={styles.validationWarning}>Title is required</span>
                                 )}
                             </div>
@@ -365,9 +371,9 @@ const Card: React.FC<{
                                     value={formBody}
                                     onChange={(e) => setFormBody(e.target.value)}
                                     placeholder="Enter post content"
-                                    className={`${styles.formTextarea} ${!formBody.trim() ? styles.errorTextarea : ""}`}
+                                    className={`${styles.formTextarea} ${submitAttempted && !formBody.trim() ? styles.errorTextarea : ""}`}
                                 />
-                                {!formBody.trim() && (
+                                {submitAttempted && !formBody.trim() && (
                                     <span className={styles.validationWarning}>Body content is required</span>
                                 )}
                             </div>
@@ -376,11 +382,11 @@ const Card: React.FC<{
                             <button 
                                 onClick={handleCreate} 
                                 className={styles.btnPrimary}
-                                disabled={loading || !formTitle.trim() || !formBody.trim()}
+                                disabled={loading}
                             >
-                                {loading ? "Creating..." : "Create (POST)"}
+                                {loading ? "Creating..." : "Create"}
                             </button>
-                            <button onClick={() => { setIsCreating(false); setFormTitle(""); setFormBody(""); setFormUserId("1"); }} className={styles.btnCancel}>Cancel</button>
+                            <button onClick={() => { setIsCreating(false); setFormTitle(""); setFormBody(""); setFormUserId("1"); setSubmitAttempted(false); }} className={styles.btnCancel}>Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -396,7 +402,7 @@ const Card: React.FC<{
                         }
                     }}>
                         <div className={styles.postContent}>
-                            <h4 className={styles.postTitle}>{limitWords(post.title, 2)}</h4>
+                            <h4 className={styles.postTitle}>{post.title}</h4>
                             <p className={styles.postBody}>{post.body}</p>
                         </div>
                         <div className={styles.postActions}>
